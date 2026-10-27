@@ -72,12 +72,17 @@ def guardar_conf(c):
 
 
 def clave(n):
-    try:
-        for l in open(os.environ.get("PN_ENV", "/odin.env")):
-            if l.startswith(n + "="):
-                return l.split("=", 1)[1].strip().strip('"')
-    except Exception:
-        pass
+    val = os.environ.get(n)
+    if val:
+        return val.strip().strip('"')
+    for p in (os.environ.get("PN_ENV"), "/config/posternotas.env", "/config/.env", "/data/.env", "/odin.env"):
+        if p and os.path.exists(p):
+            try:
+                for l in open(p):
+                    if l.startswith(n + "="):
+                        return l.split("=", 1)[1].strip().strip('"')
+            except Exception:
+                pass
     return ""
 
 
@@ -307,14 +312,18 @@ def calidad(item, ruta=""):
 
 
 # ---------- servidores ----------
-SRV = {"emby": os.environ.get("EMBY_URL", "http://192.168.1.25:8097"), "jellyfin": os.environ.get("JELLYFIN_URL", "http://192.168.1.25:8096")}
+def srv_url(srv):
+    if srv == "emby":
+        return os.environ.get("EMBY_URL") or clave("EMBY_URL") or ("http://192.168.1.25:8097" if os.path.exists("/odin.env") else "http://localhost:8096")
+    return os.environ.get("JELLYFIN_URL") or clave("JELLYFIN_URL") or ("http://192.168.1.25:8096" if os.path.exists("/odin.env") else "http://localhost:8096")
+
 
 
 def api(srv, path, data=None, ctype=None, metodo=None, crudo=False):
     k = clave("EMBY_KEY" if srv == "emby" else "JELLYFIN_KEY")
     h = {"Authorization": f'MediaBrowser Token="{k}"'}
     if ctype: h["Content-Type"] = ctype
-    r = urllib.request.urlopen(urllib.request.Request(SRV[srv] + path, data=data, headers=h, method=metodo), timeout=120).read()
+    r = urllib.request.urlopen(urllib.request.Request(srv_url(srv) + path, data=data, headers=h, method=metodo), timeout=120).read()
     return r if crudo else (json.loads(r) if r else None)
 
 
