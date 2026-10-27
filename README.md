@@ -11,6 +11,25 @@
 >
 > Al modificarse la imagen principal, **las notas e insignias se ven en todas las aplicaciones cliente** (Apple TV, Android TV, Smart TV LG webOS, Samsung Tizen, Roku, móvil, tablet y web).
 
+<p align="center">
+  <img src="docs/assets/demo-comparison.jpg" alt="Antes y Después con Póster Notas" width="850">
+</p>
+
+---
+
+## 🎨 Muestrario de Estilos y Presets
+
+Póster Notas incluye **14 estilos prediseñados** inspirados en RatingPosterDB listos para aplicar con un solo clic, permitiendo además personalización total de colores, inclinación, opacidad y tamaños:
+
+<p align="center">
+  <img src="docs/assets/demo-styles-showcase.jpg" alt="Muestrario de Estilos de Póster Notas" width="950">
+</p>
+
+| Nebula (Firma v1) | Deportivo Inclinado | Cine Dorado & Premios | RPDB Cajas (2 pisos) |
+|:---:|:---:|:---:|:---:|
+| <img src="docs/assets/style-nebula.jpg" width="220" alt="Nebula"> | <img src="docs/assets/style-deportivo.jpg" width="220" alt="Deportivo"> | <img src="docs/assets/style-dorado.jpg" width="220" alt="Cine Dorado"> | <img src="docs/assets/style-cajas.jpg" width="220" alt="Cajas"> |
+| *Pastillas dos colores de alta visibilidad* | *Paralelogramo 20° y corte dinámico* | *Negro grafito y oro con galardones de cine* | *Logotipo arriba y nota grande abajo* |
+
 ---
 
 ## ✨ Características Principales
@@ -183,6 +202,7 @@ posternotas/
 │   ├── config.json     # Ajustes configurados por el usuario
 │   ├── posternotas.sqlite  # Base de datos SQLite (caché de IMDb, premios y firmas)
 │   └── originales/     # Copias de seguridad de las carátulas originales
+├── docs/assets/        # Capturas y carátulas de demostración
 └── README.md
 ```
 
