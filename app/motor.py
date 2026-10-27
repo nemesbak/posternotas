@@ -2,7 +2,7 @@
 # Póster Notas — motor: notas + insignias grabadas en el póster (clon propio de RatingPosterDB).
 # Notas: IMDb (dataset oficial diario), TMDB (CommunityRating de Jellyfin), RT crítica (CriticRating);
 # el resto (Metacritic, RT público, Letterboxd, Trakt, Roger Ebert, MAL, MDBList) solo con MDBLIST_KEY.
-# Calidad leída del propio archivo. El póster original se guarda para revertir.
+# Calidad leída del propio archivo. Premios obtenidos vía Wikidata. Pósters originales guardados para revertir.
 import base64, csv, gzip, hashlib, io, json, os, re, sqlite3, threading, time, urllib.parse, urllib.request
 from PIL import Image
 import render
@@ -11,6 +11,8 @@ DATA = os.environ.get("PN_DATA", "/data")
 DB = os.path.join(DATA, "posternotas.sqlite")
 ORIG = os.path.join(DATA, "originales")
 CONF = os.path.join(DATA, "config.json")
+
+DEFAULT_INSIGNIAS = ["res", "hdr_dv", "audio", "idioma", "premios", "edad"]
 
 DEFAULT = {
     "servidores": {"emby": True, "jellyfin": True},
@@ -22,7 +24,7 @@ DEFAULT = {
               "relleno": 10, "margen": 0, "borde": 0, "color_borde": "#FFFFFF", "lado_borde": "default",
               "inclinacion": "no", "escala_fuente": 1.1, "negrita": True, "logos": "normal", "sombra": True},
     "insignias": {"activar": True, "posicion": "right", "apilar": False, "max": 4, "escala": 1.0, "opacidad": 0.88,
-                  "estilo": "nebula", "lista": ["res", "hdr_dv", "audio", "idioma"]},
+                  "estilo": "nebula", "lista": DEFAULT_INSIGNIAS},
     "auto": {"programado": False, "hora": "03:40", "pausa_s": 0.4, "refrescar_dias": 7},
 }
 
@@ -44,19 +46,28 @@ def conf():
         _mezcla(c, json.load(open(CONF)))
     except Exception:
         pass
+    # Protección: si la lista de insignias quedó vacía o corrupta, restablecer lista por defecto
+    if not c.get("insignias", {}).get("lista"):
+        c.setdefault("insignias", {})["lista"] = list(DEFAULT_INSIGNIAS)
     return c
 
 
 def guardar_conf(c):
     os.makedirs(DATA, exist_ok=True)
-    json.dump(_mezcla(json.loads(json.dumps(DEFAULT)), c), open(CONF + ".tmp", "w"), ensure_ascii=False, indent=1)
+    cfg = _mezcla(json.loads(json.dumps(DEFAULT)), c)
+    if not cfg.get("insignias", {}).get("lista"):
+        cfg["insignias"]["lista"] = list(DEFAULT_INSIGNIAS)
+    json.dump(cfg, open(CONF + ".tmp", "w"), ensure_ascii=False, indent=1)
     os.replace(CONF + ".tmp", CONF)
 
 
 def clave(n):
-    for l in open(os.environ.get("PN_ENV", "/odin.env")):
-        if l.startswith(n + "="):
-            return l.split("=", 1)[1].strip().strip('"')
+    try:
+        for l in open(os.environ.get("PN_ENV", "/odin.env")):
+            if l.startswith(n + "="):
+                return l.split("=", 1)[1].strip().strip('"')
+    except Exception:
+        pass
     return ""
 
 
@@ -66,6 +77,7 @@ def db():
     c.executescript("""
     create table if not exists imdb(tt text primary key, nota real, votos int);
     create table if not exists mdb(tt text primary key, datos text, ts int);
+    create table if not exists premios(tt text primary key, premio text, ts int);
     create table if not exists aplicado(servidor text, item text, firma text, tag text, ts int, titulo text, primary key(servidor,item));
     create table if not exists meta(k text primary key, v text);
     """)
@@ -88,8 +100,11 @@ def actualizar_imdb(forzar=False):
     return "%d títulos" % c.execute("select count(*) from imdb").fetchone()[0]
 
 
-MDB_MAP = {"metacritic": "mc", "metacriticuser": "mc_pub", "tomatoes": "rt", "popcorn": "rt_pub", "tomatoesaudience": "rt_pub",
-           "letterboxd": "lb", "trakt": "trakt", "rogerebert": "ebert", "myanimelist": "mal"}
+MDB_MAP = {
+    "metacritic": "mc", "metacriticuser": "mc_pub", "tomatoes": "rt",
+    "popcorn": "rt_pub", "tomatoesaudience": "rt_pub",
+    "letterboxd": "lb", "trakt": "trakt", "rogerebert": "ebert", "myanimelist": "mal"
+}
 
 
 def mdblist(tt):
@@ -112,6 +127,51 @@ def mdblist(tt):
         return {}
 
 
+def buscar_premios(tt):
+    """Consulta galardones destacados en Wikidata por ID de IMDb (tt) y los almacena en caché."""
+    if not tt:
+        return None
+    c = db()
+    r = c.execute("select premio, ts from premios where tt=?", (tt,)).fetchone()
+    if r and time.time() - r[1] < 30 * 86400:
+        return r[0] if r[0] else None
+
+    sparql = f"""SELECT DISTINCT ?awardLabel WHERE {{
+      ?m wdt:P345 "{tt}" .
+      ?m wdt:P166 ?award .
+      ?award rdfs:label ?awardLabel .
+      FILTER(LANG(?awardLabel) = "en")
+    }} LIMIT 25"""
+    url = "https://query.wikidata.org/sparql?query=" + urllib.parse.quote(sparql)
+    req = urllib.request.Request(url, headers={"Accept": "application/json", "User-Agent": "PosterNotas/2.0"})
+    premio = None
+    try:
+        data = json.loads(urllib.request.urlopen(req, timeout=4).read())
+        raw = [b["awardLabel"]["value"] for b in data.get("results", {}).get("bindings", [])]
+        oscars = sum(1 for a in raw if "Academy Award" in a or "Oscar" in a)
+        emmys = sum(1 for a in raw if "Emmy" in a)
+        gg = sum(1 for a in raw if "Golden Globe" in a)
+        bafta = sum(1 for a in raw if "BAFTA" in a)
+        cannes = sum(1 for a in raw if "Palme d'Or" in a or "Cannes" in a)
+        goya = sum(1 for a in raw if "Goya" in a)
+
+        if oscars > 1: premio = f"🏆 {oscars} OSCARS"
+        elif oscars == 1: premio = "🏆 OSCAR"
+        elif cannes >= 1: premio = "🏆 PALMA DE ORO"
+        elif goya > 1: premio = f"🏆 {goya} GOYAS"
+        elif goya == 1: premio = "🏆 GOYA"
+        elif emmys > 1: premio = f"🏆 {emmys} EMMYS"
+        elif emmys == 1: premio = "🏆 EMMY"
+        elif gg >= 1: premio = "🏆 GLOBO DE ORO"
+        elif bafta >= 1: premio = "🏆 BAFTA"
+    except Exception:
+        pass
+
+    with c:
+        c.execute("insert or replace into premios values(?,?,?)", (tt, premio or "", int(time.time())))
+    return premio
+
+
 def notas(item, jf=None):
     cf = conf()["notas"]
     pid = item.get("ProviderIds") or {}
@@ -123,7 +183,7 @@ def notas(item, jf=None):
     crit = item.get("CriticRating") or (jf or {}).get("CriticRating")
     if crit:
         n["rt"] = int(crit)
-    tm = (jf or {}).get("CommunityRating")  # en Jellyfin CommunityRating = nota de TMDB
+    tm = (jf or {}).get("CommunityRating") or item.get("CommunityRating")
     if tm:
         n["tmdb"] = round(float(tm), 1)
     extra = {"mc", "mc_pub", "rt_pub", "lb", "trakt", "ebert", "mal", "mdblist"}
@@ -138,9 +198,40 @@ def notas(item, jf=None):
 
 
 # ---------- calidad ----------
-EDICIONES = [(r"director'?s?[ ._-]?cut|montaje del director", "MONTAJE DIRECTOR"), (r"extended|extendida", "EXTENDIDA"),
-             (r"unrated|sin censura", "SIN CENSURA"), (r"remaster", "REMASTER"), (r"criterion", "CRITERION")]
-PAISES = {"spa": "es", "eng": "gb", "jpn": "jp", "fre": "fr", "fra": "fr", "ita": "it", "ger": "de", "deu": "de", "kor": "kr"}
+EDICIONES = [
+    (r"director'?s?[ ._-]?cut|montaje del director", "MONTAJE DIRECTOR"),
+    (r"extended|extendida", "EXTENDIDA"),
+    (r"unrated|sin censura", "SIN CENSURA"),
+    (r"remaster", "REMASTER"),
+    (r"criterion", "CRITERION")
+]
+
+PAISES = {
+    "spa": "es", "es": "es", "esp": "es",
+    "eng": "gb", "en": "gb",
+    "jpn": "jp", "ja": "jp",
+    "fre": "fr", "fra": "fr", "fr": "fr",
+    "ita": "it", "it": "it",
+    "ger": "de", "deu": "de", "de": "de",
+    "kor": "kr", "ko": "kr"
+}
+
+
+def parse_edad(oc):
+    if not oc:
+        return None
+    oc_up = oc.upper()
+    # Clasificación española
+    m = re.search(r"\b(18|16|12|7)\b", oc_up)
+    if m:
+        return f"+{m.group(1)}"
+    if "TP" in oc_up or "APTA" in oc_up:
+        return "TP"
+    # Clasificación estadounidense
+    for us in ("TV-MA", "NC-17", "PG-13", "TV-14", "TV-PG", "PG", "R", "G"):
+        if us in oc_up:
+            return us
+    return None
 
 
 def calidad(item, ruta=""):
@@ -149,16 +240,22 @@ def calidad(item, ruta=""):
     au = [s for s in ms if s.get("Type") == "Audio"]
     ruta = (ruta or item.get("Path") or "").lower()
     q = {}
+
     if v:
         w, h = v.get("Width") or 0, v.get("Height") or 0
         q["res"] = "4K" if w >= 3200 or h >= 1700 else "1080p" if w >= 1800 or h >= 1000 else "720p" if w >= 1200 or h >= 700 else "SD"
         rng = " ".join(str(v.get(k) or "") for k in ("VideoRange", "VideoRangeType", "ExtendedVideoType", "ExtendedVideoSubType", "DisplayTitle")).upper()
-        if "DOVI" in rng or "DOLBYVISION" in rng or "DOLBY VISION" in rng: q["dv"] = True
-        if "HDR10PLUS" in rng or "HDR10+" in rng: q["hdr"] = "HDR10+"
-        elif "HDR" in rng or "HLG" in rng: q["hdr"] = "HDR"
+        if "DOVI" in rng or "DOLBYVISION" in rng or "DOLBY VISION" in rng:
+            q["dv"] = True
+        if "HDR10PLUS" in rng or "HDR10+" in rng:
+            q["hdr"] = "HDR10+"
+        elif "HDR" in rng or "HLG" in rng:
+            q["hdr"] = "HDR"
         c = (v.get("Codec") or "").lower()
         q["codec"] = {"hevc": "H.265", "h265": "H.265", "h264": "H.264", "avc": "H.264", "av1": "AV1", "vvc": "H.266"}.get(c, c.upper() or None)
-        if v.get("Video3DFormat") or re.search(r"\b3d\b|sbs|half-ou", ruta): q["3d"] = True
+        if v.get("Video3DFormat") or re.search(r"\b3d\b|sbs|half-ou", ruta):
+            q["3d"] = True
+
     if au:
         txt = " ".join(" ".join(str(s.get(k) or "") for k in ("Profile", "DisplayTitle", "Title", "Codec")) for s in au).lower()
         mx = max((s.get("Channels") or 0) for s in au)
@@ -172,17 +269,32 @@ def calidad(item, ruta=""):
         elif "dts" in txt: q["audio"] = "DTS " + canales
         elif "flac" in txt or "pcm" in txt: q["audio"] = "LOSSLESS " + canales
         else: q["audio"] = canales
+
         langs = [(s.get("Language") or "").lower() for s in au]
-        q["es"] = any(l in ("spa", "es", "esp") for l in langs)
-        q["vose"] = not q["es"]
-        pais = next((PAISES[l] for l in langs if l in PAISES and l != "spa"), None)
-        if pais: q["pais"] = pais
+        tiene_es = any(l in ("spa", "es", "esp", "spanish") for l in langs)
+        tiene_otro = any(l and l not in ("spa", "es", "esp", "spanish", "und") for l in langs)
+
+        q["es"] = tiene_es
+        q["dual"] = tiene_es and tiene_otro
+        q["vose"] = not tiene_es and (tiene_otro or any(s.get("Type") == "Subtitle" for s in ms))
+
+        pais = next((PAISES[l] for l in langs if l in PAISES and l not in ("spa", "es", "esp")), None)
+        if pais:
+            q["pais"] = pais
+
     q["fuente"] = "REMUX" if "remux" in ruta else "BLURAY" if re.search(r"blu-?ray|bdrip|brrip", ruta) else "WEB" if re.search(r"web-?dl|webrip|\bweb\b", ruta) else None
     q["edicion"] = next((e for p, e in EDICIONES if re.search(p, ruta)), None)
-    q["imax"] = "imax" in ruta
-    oc = item.get("OfficialRating") or ""
-    m = re.search(r"(\d{1,2})", oc)
-    q["edad"] = (f"+{m.group(1)}" if m and m.group(1) != "0" else "TP") if oc else None
+    q["imax"] = "imax" in ruta or any("imax" in (s.get("DisplayTitle") or "").lower() for s in ms)
+    q["edad"] = parse_edad(item.get("OfficialRating"))
+
+    # Premios (vía Wikidata)
+    pid = item.get("ProviderIds") or {}
+    tt = pid.get("Imdb")
+    if tt:
+        prem = buscar_premios(tt)
+        if prem:
+            q["premios"] = prem
+
     return {k: v for k, v in q.items() if v}
 
 
@@ -223,7 +335,17 @@ def par_jellyfin(it):
 def calidad_serie(srv, sid):
     try:
         ep = api(srv, "/Items?" + urllib.parse.urlencode({"ParentId": sid, "Recursive": "true", "IncludeItemTypes": "Episode", "Fields": "MediaStreams,Path", "Limit": "1", "SortBy": "DateCreated", "SortOrder": "Descending"}))["Items"]
-        return calidad(ep[0]) if ep else {}
+        q = calidad(ep[0]) if ep else {}
+        # Incorporar premios de la serie si la serie los tiene
+        sit = api(srv, f"/Items/{sid}?Fields=ProviderIds,OfficialRating")
+        if sit:
+            tt = (sit.get("ProviderIds") or {}).get("Imdb")
+            if tt:
+                prem = buscar_premios(tt)
+                if prem: q["premios"] = prem
+            if not q.get("edad") and sit.get("OfficialRating"):
+                q["edad"] = parse_edad(sit["OfficialRating"])
+        return q
     except Exception:
         return {}
 
@@ -290,7 +412,8 @@ def generar(srv, it, jf=None, cf=None):
     if base is None:
         return "sin póster", n, q
     out = render.componer(base, n, q, cf)
-    buf = io.BytesIO(); out.save(buf, "JPEG", quality=cf["imagen"]["jpg"])
+    buf = io.BytesIO()
+    out.save(buf, "JPEG", quality=cf["imagen"]["jpg"])
     return buf.getvalue(), n, q
 
 
@@ -320,9 +443,13 @@ def procesar(srv, it, jf=None, forzar=False):
     if cf["imagen"]["fondos"] and (it.get("BackdropImageTags") or []):
         fo = original(srv, it, "Backdrop")
         if fo is not None:
-            cfb = json.loads(json.dumps(cf)); cfb["barra"]["posicion"] = "right-top"; cfb["insignias"]["activar"] = False
+            cfb = json.loads(json.dumps(cf))
+            cfb["barra"]["posicion"] = "right-top"
+            cfb["insignias"]["activar"] = False
             cfb["imagen"]["ancho"] = 1920
-            out = render.componer(fo, n, q, cfb); buf = io.BytesIO(); out.save(buf, "JPEG", quality=cf["imagen"]["jpg"])
+            out = render.componer(fo, n, q, cfb)
+            buf = io.BytesIO()
+            out.save(buf, "JPEG", quality=cf["imagen"]["jpg"])
             ntf = subir(srv, it["Id"], buf.getvalue(), "Backdrop")
             with c:
                 c.execute("insert or replace into aplicado values(?,?,?,?,?,?)", (srv, it["Id"] + "#fondo", fi, ntf, int(time.time()), it["Name"]))
@@ -335,7 +462,8 @@ def revertir(srv, iid):
         p = os.path.join(ORIG, srv, iid + suf + ".jpg")
         if os.path.exists(p):
             api(srv, f"/Items/{iid}/Images/{tipo}" + ("/0" if tipo == "Backdrop" else ""), data=base64.b64encode(open(p, "rb").read()), ctype="image/jpeg", metodo="POST")
-            os.remove(p); res = "revertido"
+            os.remove(p)
+            res = "revertido"
     with db() as c:
         c.execute("delete from aplicado where servidor=? and (item=? or item=?)", (srv, iid, iid + "#fondo"))
     return res
@@ -370,9 +498,13 @@ def pasada(limite=None, buscar=None, forzar=False, revertir_todo=False):
                 ids = [r[0] for r in db().execute("select item from aplicado where servidor=? and item not like '%#fondo'", (srv,))]
                 ESTADO["total"] += len(ids)
                 for i in ids:
-                    try: log(f"{srv} {i}: {revertir(srv, i)}")
-                    except Exception as e: ESTADO["errores"] += 1; log(f"{srv} {i}: ERROR {e}")
-                    ESTADO["hecho"] += 1; time.sleep(cf["auto"]["pausa_s"])
+                    try:
+                        log(f"{srv} {i}: {revertir(srv, i)}")
+                    except Exception as e:
+                        ESTADO["errores"] += 1
+                        log(f"{srv} {i}: ERROR {e}")
+                    ESTADO["hecho"] += 1
+                    time.sleep(cf["auto"]["pausa_s"])
                 continue
             items = listar(srv, tipos, buscar)
             hechos = {r[0] for r in db().execute("select item from aplicado where servidor=?", (srv,))}
@@ -387,9 +519,11 @@ def pasada(limite=None, buscar=None, forzar=False, revertir_todo=False):
                 jf = next((jf_idx[(k, pid[k])] for k in ("Imdb", "Tmdb", "Tvdb") if pid.get(k) and (k, pid[k]) in jf_idx), None)
                 try:
                     res = procesar(srv, it, jf, forzar)
-                    if res != "igual": log(f"{srv} · {it['Name']}: {res}")
+                    if res != "igual":
+                        log(f"{srv} · {it['Name']}: {res}")
                 except Exception as e:
-                    ESTADO["errores"] += 1; log(f"{srv} · {it['Name']}: ERROR {str(e)[:140]}")
+                    ESTADO["errores"] += 1
+                    log(f"{srv} · {it['Name']}: ERROR {str(e)[:140]}")
                 ESTADO["hecho"] += 1
                 time.sleep(cf["auto"]["pausa_s"])
         log("pasada terminada")

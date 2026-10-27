@@ -1,298 +1,1738 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Póster Notas</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Póster Notas · Estudio de Calificaciones e Insignias</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#09090c;--bg2:#101117;--card:#14151c;--card2:#1a1c25;--line:#252836;--line2:#30344a;--txt:#ecedf3;--dim:#8a90a6;--dim2:#5f657b;
---acc:#f5c518;--acc2:#ffdd55;--accbg:rgba(245,197,24,.12);--ok:#34d399;--bad:#f87171;--blue:#60a5fa;--r:14px}
-*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.5 Inter,system-ui,sans-serif}
-button,input,select{font:inherit;color:inherit}
-/* cabecera */
-header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;padding:14px 24px;background:rgba(9,9,12,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.02em}
-.logo b{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--acc),#ff9f1c);color:#000;font-size:16px}
-.chips{display:flex;gap:8px;flex-wrap:wrap;flex:1}
-.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;background:var(--card);border:1px solid var(--line);color:var(--dim);font-size:12px;font-weight:500}
-.chip i{width:7px;height:7px;border-radius:50%;background:var(--dim2)}.chip.ok i{background:var(--ok)}.chip.warn i{background:var(--acc)}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:10px;border:1px solid var(--line2);background:var(--card2);font-weight:600;cursor:pointer;transition:.15s}
-.btn:hover{border-color:var(--dim2);transform:translateY(-1px)}.btn.pri{background:var(--acc);border-color:var(--acc);color:#000}.btn.pri:hover{background:var(--acc2)}
-.btn.bad{color:var(--bad);border-color:rgba(248,113,113,.35)}.btn.sm{padding:6px 10px;font-size:12px}.btn:disabled{opacity:.45;cursor:default;transform:none}
-.sucio{display:none;color:var(--acc);font-size:12px;font-weight:600}.sucio.on{display:inline}
-/* layout */
-.wrap{display:grid;grid-template-columns:220px minmax(0,1fr) 430px;gap:22px;padding:22px 24px;max-width:1600px;margin:0 auto}
-@media(max-width:1250px){.wrap{grid-template-columns:200px 1fr}.vista{grid-column:1/-1;order:-1}}
-@media(max-width:760px){.wrap{grid-template-columns:1fr;padding:16px}nav{flex-direction:row!important;overflow:auto;position:static!important}nav a{white-space:nowrap}}
-nav{display:flex;flex-direction:column;gap:4px;position:sticky;top:84px;align-self:start}
-nav a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--dim);text-decoration:none;font-weight:600;cursor:pointer;border:1px solid transparent}
-nav a:hover{background:var(--card);color:var(--txt)}nav a.on{background:var(--accbg);color:var(--acc);border-color:rgba(245,197,24,.25)}
-nav a span{width:22px;text-align:center}
-.pane{display:none;animation:fade .2s}.pane.on{display:block}@keyframes fade{from{opacity:0;transform:translateY(4px)}}
-h2{margin:0 0 4px;font-size:22px;letter-spacing:-.02em}.sub{color:var(--dim);margin:0 0 18px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
-.card h3{margin:0 0 14px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);font-weight:700}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px 22px}@media(max-width:900px){.grid2{grid-template-columns:1fr}}
-.campo{display:flex;flex-direction:column;gap:6px}.campo>span{font-weight:600;font-size:13px}.campo small{color:var(--dim2);font-size:12px}
-.fila{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line)}.fila:first-of-type{border-top:0}
-.fila b{font-weight:600}.fila small{display:block;color:var(--dim2);font-size:12px;font-weight:400}
-select,input[type=text],input[type=number],input[type=time]{background:var(--bg2);border:1px solid var(--line2);border-radius:9px;padding:8px 10px;outline:none}
-select:focus,input:focus{border-color:var(--acc)}
-input[type=color]{width:42px;height:34px;border:1px solid var(--line2);border-radius:9px;background:var(--bg2);padding:3px;cursor:pointer}
-/* interruptor */
-.sw{position:relative;width:42px;height:24px;flex:none}.sw input{opacity:0;width:0;height:0}
-.sw i{position:absolute;inset:0;border-radius:99px;background:var(--line2);transition:.2s;cursor:pointer}
-.sw i:after{content:"";position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}
-.sw input:checked+i{background:var(--acc)}.sw input:checked+i:after{transform:translateX(18px);background:#000}
-/* deslizador */
-.rng{display:flex;align-items:center;gap:12px}.rng input{flex:1;accent-color:var(--acc)}.rng output{min-width:48px;text-align:right;color:var(--acc);font-weight:700;font-variant-numeric:tabular-nums}
-/* segmentado */
-.seg{display:inline-flex;background:var(--bg2);border:1px solid var(--line2);border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap}
-.seg button{border:0;background:transparent;padding:6px 12px;border-radius:7px;color:var(--dim);font-weight:600;cursor:pointer}
-.seg button.on{background:var(--card2);color:var(--txt);box-shadow:0 0 0 1px var(--line2)}
-/* temas */
-.temas{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
-.tema{border:2px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;background:var(--bg2);transition:.15s}
-.tema:hover{border-color:var(--dim2)}.tema.on{border-color:var(--acc);box-shadow:0 0 0 4px var(--accbg)}
-.tema img{display:block;width:100%;aspect-ratio:2/3;object-fit:cover;background:#000}.tema div{padding:7px 9px;font-size:12px;font-weight:600}
-/* selector de posición */
-.posmap{position:relative;width:150px;aspect-ratio:2/3;border-radius:10px;background:linear-gradient(160deg,#2b2f40,#151722);border:1px solid var(--line2)}
-.posmap button{position:absolute;width:30px;height:22px;border-radius:6px;border:1px solid var(--line2);background:rgba(0,0,0,.45);cursor:pointer;transition:.15s}
-.posmap button:hover{border-color:var(--acc)}.posmap button.on{background:var(--acc);border-color:var(--acc)}
-/* listas ordenables */
-.orden{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
-.orden li{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg2);cursor:grab;user-select:none}
-.orden li.off{opacity:.5}.orden li.drag{opacity:.35}.orden li.over{border-color:var(--acc)}
-.orden .asa{color:var(--dim2);font-size:16px}.orden .nom{flex:1;font-weight:600}.orden .tag{font-size:11px;color:var(--dim);border:1px solid var(--line2);padding:2px 7px;border-radius:99px}
-.lock{color:var(--dim2)!important}
-/* vista previa */
-.vista{position:sticky;top:84px;align-self:start}
-.marco{position:relative;border-radius:16px;overflow:hidden;background:#000;border:1px solid var(--line);aspect-ratio:2/3;box-shadow:0 30px 80px -30px rgba(0,0,0,.8)}
-.marco img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .25s}
-.marco .ori{clip-path:inset(0 calc(100% - var(--corte,0%)) 0 0)}
-.marco .carga{position:absolute;inset:auto 12px 12px auto;padding:4px 10px;border-radius:99px;background:rgba(0,0,0,.65);font-size:12px;color:var(--dim);display:none}.marco.cargando .carga{display:block}
-.vacio{position:absolute;inset:0;display:grid;place-items:center;color:var(--dim2);text-align:center;padding:30px}
-.antes{display:flex;align-items:center;gap:10px;margin:12px 0}.antes input{flex:1;accent-color:var(--acc)}.antes small{color:var(--dim)}
-.busca{display:flex;gap:8px}.busca input{flex:1}
-.resultados{display:flex;flex-direction:column;gap:2px;max-height:190px;overflow:auto;margin-top:8px}
-.resultados div{padding:7px 10px;border-radius:8px;cursor:pointer;display:flex;justify-content:space-between;gap:8px}
-.resultados div:hover{background:var(--card2)}.resultados div.on{background:var(--accbg);color:var(--acc)}.resultados em{color:var(--dim2);font-style:normal;font-size:12px}
-.datos{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.datos span{font-size:12px;padding:3px 9px;border-radius:99px;background:var(--card2);border:1px solid var(--line);color:var(--dim)}
-.datos span b{color:var(--txt)}
-/* aplicar */
-.acciones{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
-.accion{padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--bg2);cursor:pointer;text-align:left;transition:.15s}
-.accion:hover{border-color:var(--dim2)}.accion b{display:block;font-size:14px}.accion small{color:var(--dim)}.accion.pri{border-color:rgba(245,197,24,.4);background:var(--accbg)}.accion.bad b{color:var(--bad)}
-.progreso{height:10px;background:var(--bg2);border-radius:99px;overflow:hidden;margin:14px 0 8px}.progreso i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),#ff9f1c);transition:width .4s}
-#log{height:240px;overflow:auto;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:12px/1.6 ui-monospace,Consolas,monospace;color:var(--dim);white-space:pre-wrap}
-.recientes{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px}
-.recientes figure{margin:0;position:relative;cursor:pointer}.recientes img{width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:8px;border:1px solid var(--line);background:#000}
-.recientes figcaption{font-size:11px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(30px);opacity:0;background:var(--card2);border:1px solid var(--line2);padding:10px 16px;border-radius:12px;transition:.25s;z-index:50;font-weight:600}
-.toast.on{opacity:1;transform:translateX(-50%)}
-</style></head><body>
-<header>
- <div class="logo"><b>★</b>Póster Notas</div>
- <div class="chips"><span class="chip" id="cImdb"><i></i>IMDb</span><span class="chip" id="cMdb"><i></i>MDBList</span><span class="chip" id="cApl"><i></i>Aplicados</span><span class="chip" id="cEst"><i></i>Parado</span></div>
- <span class="sucio" id="sucio">● Cambios sin guardar</span>
- <button class="btn" id="bReset" title="Volver a los ajustes de fábrica">Restablecer</button>
- <button class="btn pri" id="bGuardar">Guardar</button>
-</header>
-<div class="wrap">
-<nav id="nav">
- <a data-p="tema" class="on"><span>🎨</span>Tema</a><a data-p="notas"><span>⭐</span>Notas</a><a data-p="barra"><span>📐</span>Barra de notas</a>
- <a data-p="insignias"><span>🏷️</span>Insignias</a><a data-p="imagen"><span>🖼️</span>Imagen</a><a data-p="biblio"><span>📚</span>Biblioteca</a><a data-p="aplicar"><span>🚀</span>Aplicar</a>
-</nav>
-<main>
- <!-- TEMA -->
- <section class="pane on" id="p-tema"><h2>Tema</h2><p class="sub">El aspecto general de las notas. Las miniaturas usan el título de la vista previa.</p>
-  <div class="card"><h3>Estilos prediseñados</h3><p class="sub" style="margin-top:-6px">Un clic carga el estilo entero; luego puedes retocarlo en las otras pestañas.</p><div class="temas" id="presets"></div></div>
-  <div class="card"><h3>Temas</h3><div class="temas" id="temas"></div></div>
-  <div class="card"><div class="fila"><div><b>Versión clara</b><small>Fondo blanco y texto oscuro (los temas <i>light-</i> de RPDB)</small></div><label class="sw"><input type="checkbox" data-k="claro"><i></i></label></div></div>
- </section>
- <!-- NOTAS -->
- <section class="pane" id="p-notas"><h2>Notas</h2><p class="sub">Qué fuentes salen y en qué orden. Arrastra para ordenar.</p>
-  <div class="card"><h3>Fuentes</h3><ul class="orden" id="fuentes"></ul><p class="sub" id="avisoMdb" style="margin:12px 0 0;font-size:12px"></p></div>
-  <div class="card"><h3>Formato</h3>
-   <div class="fila"><div><b>Cómo se escriben</b><small>RPDB «textStyle»</small></div><div class="seg" data-seg="notas.formato"><button data-v="0">7,4 · 75%</button><button data-v="1">Sobre 100</button><button data-v="2">Sin sufijos</button></div></div>
-   <div class="fila"><div><b>Decimales con coma</b><small>7,8 en vez de 7.8</small></div><label class="sw"><input type="checkbox" data-k="notas.decimales_coma"><i></i></label></div>
-   <div class="fila"><div><b>Mínimo de votos en IMDb</b><small>Por debajo no se muestra IMDb (RPDB usa 500)</small></div><input type="number" min="0" step="100" data-k="notas.min_votos_imdb" style="width:110px"></div>
-   <div class="fila"><div><b>Etiqueta personalizada</b><small>Texto libre como primera insignia (p. ej. «ESTRENO»). Vacío = nada</small></div><input type="text" data-k="notas.etiqueta" maxlength="18" style="width:160px"></div>
-  </div>
- </section>
- <!-- BARRA -->
- <section class="pane" id="p-barra"><h2>Barra de notas</h2><p class="sub">Posición, colores, formas y efectos.</p>
-  <div class="card"><h3>Posición</h3><div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap"><div class="posmap" id="posBarra"></div>
-   <div class="campo" style="flex:1;min-width:220px"><span>Logos de las fuentes</span><div class="seg" data-seg="barra.logos"><button data-v="normal">Rectangulares</button><button data-v="redondo">Redondos</button><button data-v="no">Sin logo</button></div>
-   <span style="margin-top:12px">Inclinación</span><div class="seg" data-seg="barra.inclinacion"><button data-v="no">Recta</button><button data-v="left">Izquierda</button><button data-v="right">Derecha</button></div></div></div></div>
-  <div class="card"><h3>Tamaño y espacio</h3><div class="grid2">
-   <div class="campo"><span>Tamaño de letra</span><div class="rng"><input type="range" min="0.6" max="1.6" step="0.05" data-k="barra.escala_fuente"><output></output></div></div>
-   <div class="campo"><span>Opacidad del fondo</span><div class="rng"><input type="range" min="0.01" max="0.99" step="0.01" data-k="barra.opacidad"><output></output></div></div>
-   <div class="campo"><span>Relleno</span><div class="rng"><input type="range" min="0" max="30" step="1" data-k="barra.relleno"><output></output></div></div>
-   <div class="campo"><span>Margen al borde</span><div class="rng"><input type="range" min="0" max="80" step="1" data-k="barra.margen"><output></output></div></div>
-  </div></div>
-  <div class="card"><h3>Forma</h3>
-   <div class="fila"><div><b>Redondeo</b><small>Automático según el tema, completo o en píxeles</small></div><div style="display:flex;gap:8px;align-items:center"><div class="seg" id="segRedondeo"><button data-v="default">Auto</button><button data-v="full">Completo</button><button data-v="px">Píxeles</button></div><input type="number" id="redondeoPx" min="0" max="60" style="width:70px"></div></div>
-   <div class="fila"><div><b>Borde</b><small>Grosor en píxeles (0 = sin borde)</small></div><div style="display:flex;gap:8px;align-items:center"><input type="number" min="0" max="12" data-k="barra.borde" style="width:70px"><input type="color" data-k="barra.color_borde"></div></div>
-   <div class="fila"><div><b>Lado del borde</b></div><div class="seg" data-seg="barra.lado_borde"><button data-v="default">Todos</button><button data-v="left">Izq.</button><button data-v="right">Dcha.</button><button data-v="top">Arriba</button><button data-v="bottom">Abajo</button></div></div>
-  </div>
-  <div class="card"><h3>Color y efectos</h3>
-   <div class="fila"><div><b>Color de fondo</b></div><input type="color" data-k="barra.color"></div>
-   <div class="fila"><div><b>Color del texto</b></div><input type="color" data-k="barra.color_texto"></div>
-   <div class="fila"><div><b>Números en negrita</b></div><label class="sw"><input type="checkbox" data-k="barra.negrita"><i></i></label></div>
-   <div class="fila"><div><b>Sombra suave</b><small>Mejora la lectura sobre pósters claros</small></div><label class="sw"><input type="checkbox" data-k="barra.sombra"><i></i></label></div>
-  </div>
- </section>
- <!-- INSIGNIAS -->
- <section class="pane" id="p-insignias"><h2>Insignias</h2><p class="sub">Calidad leída del propio archivo: exacta, no adivinada.</p>
-  <div class="card"><div class="fila"><div><b>Mostrar insignias</b></div><label class="sw"><input type="checkbox" data-k="insignias.activar"><i></i></label></div></div>
-  <div class="card"><h3>Cuáles y en qué orden</h3><ul class="orden" id="tiposIns"></ul></div>
-  <div class="card"><h3>Posición y estilo</h3><div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap"><div class="posmap" id="posIns"></div>
-   <div style="flex:1;min-width:240px">
-    <div class="fila"><div><b>Estilo</b></div><div class="seg" data-seg="insignias.estilo"><button data-v="nebula">Nebula</button><button data-v="normal">Normal</button><button data-v="oro">Dorado</button><button data-v="color">Color</button></div></div>
-    <div class="fila"><div><b>Apilar en columna</b></div><label class="sw"><input type="checkbox" data-k="insignias.apilar"><i></i></label></div>
-    <div class="fila"><div><b>Máximo</b></div><input type="number" min="1" max="8" data-k="insignias.max" style="width:70px"></div>
-    <div class="campo" style="margin-top:8px"><span>Tamaño</span><div class="rng"><input type="range" min="0.6" max="1.6" step="0.05" data-k="insignias.escala"><output></output></div></div>
-    <div class="campo" style="margin-top:8px"><span>Opacidad</span><div class="rng"><input type="range" min="0.3" max="1" step="0.02" data-k="insignias.opacidad"><output></output></div></div>
-   </div></div></div>
- </section>
- <!-- IMAGEN -->
- <section class="pane" id="p-imagen"><h2>Imagen</h2><p class="sub">De qué póster se parte y cómo se guarda.</p>
-  <div class="card"><h3>Póster base</h3>
-   <div class="fila"><div><b>Origen</b><small>«Sin texto» y «Por idioma» se descargan de TMDB; si no hay, se usa el actual</small></div><div class="seg" data-seg="imagen.origen"><button data-v="actual">El actual</button><button data-v="sin_texto">Sin texto</button><button data-v="idioma">Por idioma</button></div></div>
-   <div class="fila"><div><b>Idioma del póster</b></div><select data-k="imagen.idioma"><option value="es">Español</option><option value="en">Inglés</option><option value="fr">Francés</option><option value="it">Italiano</option><option value="de">Alemán</option><option value="pt">Portugués</option><option value="ja">Japonés</option><option value="ko">Coreano</option></select></div>
-   <div class="fila"><div><b>Si no hay notas, dejar el póster normal</b><small>«fallback» de RPDB</small></div><label class="sw"><input type="checkbox" data-k="imagen.fallback"><i></i></label></div>
-   <div class="fila"><div><b>Notas también en los fondos</b><small>Arriba a la derecha del fondo, como RPDB</small></div><label class="sw"><input type="checkbox" data-k="imagen.fondos"><i></i></label></div>
-  </div>
-  <div class="card"><h3>Salida</h3><div class="grid2">
-   <div class="campo"><span>Ancho del póster</span><select data-k="imagen.ancho" data-num><option value="580">580 px (medio)</option><option value="1000">1000 px</option><option value="1280">1280 px (grande)</option><option value="2000">2000 px (muy grande)</option></select></div>
-   <div class="campo"><span>Calidad JPG</span><div class="rng"><input type="range" min="70" max="100" step="1" data-k="imagen.jpg"><output></output></div></div>
-  </div></div>
- </section>
- <!-- BIBLIOTECA -->
- <section class="pane" id="p-biblio"><h2>Biblioteca</h2><p class="sub">Dónde se aplica y cuándo se actualiza solo.</p>
-  <div class="card"><h3>Servidores y tipos</h3>
-   <div class="fila"><div><b>Emby</b></div><label class="sw"><input type="checkbox" data-k="servidores.emby"><i></i></label></div>
-   <div class="fila"><div><b>Jellyfin</b></div><label class="sw"><input type="checkbox" data-k="servidores.jellyfin"><i></i></label></div>
-   <div class="fila"><div><b>Películas</b></div><label class="sw"><input type="checkbox" data-k="tipos.Movie"><i></i></label></div>
-   <div class="fila"><div><b>Series</b></div><label class="sw"><input type="checkbox" data-k="tipos.Series"><i></i></label></div>
-  </div>
-  <div class="card"><h3>Automático</h3>
-   <div class="fila"><div><b>Pasada diaria</b><small>Títulos nuevos y notas que han cambiado</small></div><label class="sw"><input type="checkbox" data-k="auto.programado"><i></i></label></div>
-   <div class="fila"><div><b>Hora</b></div><input type="time" data-k="auto.hora"></div>
-   <div class="fila"><div><b>Pausa entre títulos</b><small>Segundos, para no cargar Emby/Jellyfin</small></div><input type="number" min="0" step="0.1" data-k="auto.pausa_s" style="width:80px"></div>
-   <div class="fila"><div><b>Refrescar notas de MDBList cada</b><small>Días</small></div><input type="number" min="1" data-k="auto.refrescar_dias" style="width:80px"></div>
-  </div>
- </section>
- <!-- APLICAR -->
- <section class="pane" id="p-aplicar"><h2>Aplicar</h2><p class="sub">Cada póster original se guarda: todo se puede revertir.</p>
-  <div class="card"><h3>Acciones</h3><div class="acciones">
-   <button class="accion" data-a="10"><b>🧪 Probar con 10</b><small>Los 10 más recientes que aún no tienen notas</small></button>
-   <button class="accion" data-a="100"><b>➕ 100 más</b><small>Siguiente tanda</small></button>
-   <button class="accion pri" data-a="todo"><b>🚀 Toda la biblioteca</b><small>Lo que falte, en segundo plano</small></button>
-   <button class="accion" data-a="forzar"><b>🔄 Redibujar aplicados</b><small>Con los ajustes actuales</small></button>
-   <button class="accion bad" data-a="revertir"><b>↩ Revertir todo</b><small>Vuelven los pósters originales</small></button>
-  </div>
-  <div class="progreso"><i id="barra"></i></div><small id="estTxt" style="color:var(--dim)">—</small></div>
-  <div class="card"><h3>Últimos aplicados</h3><div class="recientes" id="recientes"></div></div>
-  <div class="card"><h3>Registro</h3><div id="log"></div></div>
- </section>
-</main>
-<!-- VISTA PREVIA -->
-<aside class="vista">
- <div class="card" style="padding:14px">
-  <div class="busca"><select id="srv"><option value="emby">Emby</option><option value="jellyfin">Jellyfin</option></select><input type="text" id="q" placeholder="Buscar película o serie…"></div>
-  <div class="resultados" id="res"></div>
- </div>
- <div class="marco" id="marco"><div class="vacio" id="vacio">Busca un título para ver la vista previa<br>con tus ajustes, sin cambiar nada.</div><img id="imgNueva" alt=""><img id="imgOri" class="ori" alt=""><span class="carga">Generando…</span></div>
- <div class="antes"><small>Antes</small><input type="range" id="corte" min="0" max="100" value="100"><small>Después</small></div>
- <div class="datos" id="datos"></div>
- <div style="display:flex;gap:8px;margin-top:12px"><button class="btn sm" id="bUno" disabled>Aplicar a este</button><button class="btn sm bad" id="bRevUno" disabled>Revertir este</button></div>
-</aside>
-</div>
-<div class="toast" id="toast"></div>
-<script>
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-let C={},G={},M={},sel=null,tt=null,ttT=null;
-const get=(o,k)=>k.split('.').reduce((a,b)=>a?.[b],o), put=(o,k,v)=>{const p=k.split('.');let a=o;p.slice(0,-1).forEach(x=>a=a[x]??={});a[p.at(-1)]=v};
-const api=(u,b)=>fetch(u,b!==undefined?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}:{}).then(r=>r.ok?r.json():Promise.reject(r));
-const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2600)};
-const sucio=()=>{$('#sucio').classList.toggle('on',JSON.stringify(C)!==JSON.stringify(G))};
-const cambio=()=>{sucio();preview();clearTimeout(ttT);ttT=setTimeout(temas,700)};
-const INS={res:'Resolución (4K, 1080p…)',hdr_dv:'HDR / HDR10+ / Dolby Vision',audio:'Audio (Atmos, TrueHD, DD+, canales)',idioma:'Idioma (🇪🇸 o VOSE)',fuente:'Origen (Remux, BluRay, WEB)',codec:'Códec (H.265, AV1…)',edicion:'Edición (montaje del director, extendida…)',imax:'IMAX',['3d']:'3D',edad:'Edad (+12, +16…)',pais:'País del idioma original'};
-const NOMTEMA={pastillas:'Pastillas','pastillas-barra':'Pastillas en barra',bar:'Barra',blocks:'Bloques','rounded-blocks':'Bloques redondos',boxes:'Cajas','sharp-blocks':'Bloques rectos','stripes-left':'Franjas izq.','stripes-right':'Franjas dcha.'};
-// navegación
-$$('#nav a').forEach(a=>a.onclick=()=>{$$('#nav a').forEach(x=>x.classList.toggle('on',x===a));$$('.pane').forEach(p=>p.classList.toggle('on',p.id==='p-'+a.dataset.p));if(a.dataset.p==='tema'){temas();presets()}});
-// enlazar controles
-function enlazar(){
- $$('[data-k]').forEach(e=>{const k=e.dataset.k,v=get(C,k);if(e.type==='checkbox')e.checked=!!v;else e.value=v??'';
-  const out=e.parentElement.querySelector('output');if(out)out.textContent=e.value;
-  e.oninput=()=>{let v=e.type==='checkbox'?e.checked:(e.type==='range'||e.type==='number'||'num' in e.dataset)?+e.value:e.value;put(C,k,v);if(out)out.textContent=e.value;cambio()}});
- $$('[data-seg]').forEach(s=>{const k=s.dataset.seg;[...s.children].forEach(b=>{b.classList.toggle('on',String(get(C,k))===b.dataset.v);
-  b.onclick=()=>{const v=isNaN(+b.dataset.v)||b.dataset.v===''?b.dataset.v:+b.dataset.v;put(C,k,v);[...s.children].forEach(x=>x.classList.toggle('on',x===b));cambio()}})});
- // redondeo
- const r=C.barra.redondeo,seg=$('#segRedondeo'),px=$('#redondeoPx');const modo=(r==='default'||r==='full')?r:'px';
- [...seg.children].forEach(b=>{b.classList.toggle('on',b.dataset.v===modo);b.onclick=()=>{[...seg.children].forEach(x=>x.classList.toggle('on',x===b));C.barra.redondeo=b.dataset.v==='px'?(+px.value||12):b.dataset.v;px.disabled=b.dataset.v!=='px';cambio()}});
- px.value=modo==='px'?r:12;px.disabled=modo!=='px';px.oninput=()=>{C.barra.redondeo=+px.value;cambio()};
- posmapa('#posBarra','barra.posicion',[['top',50,6],['left-top',10,16],['right-top',90,16],['left-center',10,50],['right-center',90,50],['left-bottom',10,84],['right-bottom',90,84],['bottom',50,94]]);
- posmapa('#posIns','insignias.posicion',[['left',14,6],['center',50,6],['right',86,6],['bottom|left',14,94],['bottom|center',50,94],['bottom|right',86,94]]);
- listaFuentes();listaIns();
+:root {
+  --bg: #090a0f;
+  --bg2: #10121a;
+  --card: #151824;
+  --card2: #1b1f2e;
+  --card-hover: #22273a;
+  --line: #262b3d;
+  --line2: #333a52;
+  --txt: #f0f2f8;
+  --dim: #949ab1;
+  --dim2: #626880;
+  --acc: #f5c518;
+  --acc2: #ffd54f;
+  --accbg: rgba(245, 197, 24, 0.12);
+  --ok: #10b981;
+  --okbg: rgba(16, 185, 129, 0.12);
+  --bad: #f43f5e;
+  --badbg: rgba(244, 63, 94, 0.12);
+  --blue: #38bdf8;
+  --purple: #a855f7;
+  --r: 14px;
 }
-function posmapa(sel,k,pts){const m=$(sel);m.innerHTML='';pts.forEach(([v,x,y])=>{const b=document.createElement('button');b.title=v;b.style.left=`calc(${x}% - 15px)`;b.style.top=`calc(${y}% - 11px)`;
- b.classList.toggle('on',get(C,k)===v);b.onclick=()=>{put(C,k,v);[...m.children].forEach(c=>c.classList.toggle('on',c===b));cambio()};m.appendChild(b)})}
-function ordenable(ul,arr,todos,nombre,bloqueado,onc){ul.innerHTML='';const lista=[...arr,...todos.filter(k=>!arr.includes(k))];let arr2=arr;
- lista.forEach(k=>{const li=document.createElement('li'),on=arr.includes(k),lock=bloqueado(k);li.draggable=true;li.dataset.k=k;li.className=(on?'':'off')+(lock?' lock':'');
-  li.innerHTML=`<span class="asa">⠿</span><span class="nom">${nombre(k)}</span>${lock?'<span class="tag">requiere MDBList</span>':''}<label class="sw"><input type="checkbox" ${on?'checked':''}><i></i></label>`;
-  li.querySelector('input').onchange=e=>{onc(e.target.checked?[...arr2,k]:arr2.filter(x=>x!==k))};
-  li.ondragstart=()=>li.classList.add('drag');li.ondragend=()=>{li.classList.remove('drag');const orden=[...ul.children].map(x=>x.dataset.k).filter(x=>arr2.includes(x));if(orden.length===arr2.length&&orden.join()!==arr2.join())onc(orden)};
-  li.ondragover=e=>{e.preventDefault();const d=ul.querySelector('.drag');if(d&&d!==li){const r=li.getBoundingClientRect();ul.insertBefore(d,e.clientY<r.top+r.height/2?li:li.nextSibling)}};
-  ul.appendChild(li)})}
-function listaFuentes(){ordenable($('#fuentes'),C.notas.fuentes,Object.keys(M.fuentes),k=>M.fuentes[k],k=>!M.mdblist&&M.requieren_mdblist.includes(k),v=>{C.notas.fuentes=v;listaFuentes();cambio()});
- $('#avisoMdb').textContent=M.mdblist?'MDBList activo: todas las fuentes disponibles.':'Sin clave de MDBList: solo IMDb, Rotten Tomatoes (crítica), TMDB y la media salen siempre. Añade MDBLIST_KEY en /boot/config/odin.env para el resto.'}
-function listaIns(){ordenable($('#tiposIns'),C.insignias.lista,Object.keys(INS),k=>INS[k],()=>false,v=>{C.insignias.lista=v;listaIns();cambio()})}
-// temas
-function temas(){const g=$('#temas');if(!g.children.length)M.temas.forEach(t=>{const d=document.createElement('div');d.className='tema';d.dataset.t=t;d.innerHTML=`<img alt=""><div>${NOMTEMA[t]||t}</div>`;d.onclick=()=>{C.tema=t;marcaTema();cambio()};g.appendChild(d)});
- marcaTema();if(!sel||!$('#p-tema').classList.contains('on'))return;
- $$('#temas .tema').forEach(d=>{const c=JSON.parse(JSON.stringify(C));c.tema=d.dataset.t;d.querySelector('img').src=`/api/preview?srv=${sel.srv}&id=${sel.id}&w=240&conf=${encodeURIComponent(JSON.stringify(c))}`})}
-function fusion(a,b){for(const k in b){if(b[k]&&typeof b[k]==='object'&&!Array.isArray(b[k]))fusion(a[k]??={},b[k]);else a[k]=b[k]}return a}
-function presets(){const g=$('#presets');if(!g.children.length)M.presets.forEach((p,i)=>{const d=document.createElement('div');d.className='tema';d.dataset.i=i;d.title=p.desc;d.innerHTML=`<img alt=""><div>${p.nombre}<br><small style="color:var(--dim2);font-weight:400">${p.desc}</small></div>`;
- d.onclick=()=>{fusion(C,JSON.parse(JSON.stringify(p.conf)));enlazar();marcaTema();$$('#presets .tema').forEach(x=>x.classList.toggle('on',x===d));cambio();toast('Estilo «'+p.nombre+'» cargado (sin guardar)')};g.appendChild(d)});
- if(!sel)return;$$('#presets .tema').forEach(d=>{const c=fusion(JSON.parse(JSON.stringify(C)),M.presets[d.dataset.i].conf);d.querySelector('img').src=`/api/preview?srv=${sel.srv}&id=${sel.id}&w=240&conf=${encodeURIComponent(JSON.stringify(c))}`})}
-const marcaTema=()=>$$('#temas .tema').forEach(d=>d.classList.toggle('on',d.dataset.t===C.tema));
-// vista previa
-function preview(){if(!sel)return;clearTimeout(tt);tt=setTimeout(()=>{const m=$('#marco');m.classList.add('cargando');const img=new Image();
- img.onload=()=>{$('#imgNueva').src=img.src;m.classList.remove('cargando')};img.onerror=()=>{m.classList.remove('cargando');toast('No se pudo generar (¿sin póster?)')};
- img.src=`/api/preview?srv=${sel.srv}&id=${sel.id}&w=860&conf=${encodeURIComponent(JSON.stringify(C))}&_=${Date.now()}`},280)}
-$('#corte').oninput=e=>$('#marco').style.setProperty('--corte',(100-e.target.value)+'%');
-async function elegir(srv,id){sel={srv,id};$('#vacio').style.display='none';$('#bUno').disabled=$('#bRevUno').disabled=false;
- $('#imgOri').src=`/api/original?srv=${srv}&id=${id}&w=860&_=${Date.now()}`;$('#corte').value=100;$('#marco').style.setProperty('--corte','0%');preview();temas();presets();
- try{const d=await api(`/api/detalle?srv=${srv}&id=${id}`);const N={imdb:'IMDb',rt:'RT',tmdb:'TMDB',mc:'MC',mc_pub:'MC usuarios',rt_pub:'RT público',lb:'Letterboxd',trakt:'Trakt',ebert:'Ebert',mal:'MAL',mdblist:'MDBList',media:'Media'};
-  $('#datos').innerHTML=Object.entries(d.notas).map(([k,v])=>`<span>${N[k]||k} <b>${v}</b></span>`).join('')+Object.entries(d.calidad).map(([k,v])=>`<span>${k} <b>${v===true?'sí':v}</b></span>`).join('')+(d.aplicado?'<span style="color:var(--ok)">● aplicado</span>':'')}catch(_){}}
-let tb;$('#q').oninput=()=>{clearTimeout(tb);tb=setTimeout(buscar,300)};$('#srv').onchange=buscar;
-async function buscar(){const srv=$('#srv').value,r=await api(`/api/buscar?srv=${srv}&q=${encodeURIComponent($('#q').value)}`);const box=$('#res');box.innerHTML='';
- r.forEach(x=>{const d=document.createElement('div');d.innerHTML=`<span>${x.nombre}</span><em>${x.anio||''} · ${x.tipo==='Movie'?'peli':'serie'}</em>`;d.onclick=()=>{[...box.children].forEach(c=>c.classList.remove('on'));d.classList.add('on');elegir(srv,x.id)};box.appendChild(d)});
- if(!sel&&r[0])box.children[0].click()}
-// guardar
-async function guardar(){await api('/api/config',C);G=JSON.parse(JSON.stringify(C));sucio();toast('Ajustes guardados ✔')}
-$('#bGuardar').onclick=guardar;
-$('#bReset').onclick=async()=>{if(!confirm('¿Volver a los ajustes de fábrica?'))return;await api('/api/config/reset',{});await cargar();toast('Ajustes restablecidos')};
-window.onbeforeunload=e=>{if(JSON.stringify(C)!==JSON.stringify(G)){e.preventDefault();return''}};
-$('#bUno').onclick=async()=>{await guardar();const r=await api('/api/aplicar_uno',sel);toast('Resultado: '+r.res);elegir(sel.srv,sel.id)};
-$('#bRevUno').onclick=async()=>{const r=await api('/api/revertir',sel);toast(r.res==='revertido'?'Póster original restaurado':'Este título no tenía notas aplicadas');elegir(sel.srv,sel.id)};
-$$('.accion').forEach(b=>b.onclick=async()=>{const a=b.dataset.a;
- if(a==='revertir'){if(confirm('¿Volver a poner TODOS los pósters originales?')){await api('/api/revertir',{todo:true});toast('Revirtiendo…')}return}
- if(a==='todo'&&!confirm('¿Aplicar a toda la biblioteca? Se guarda cada original y se puede revertir.'))return;
- if(a==='forzar'&&!confirm('¿Redibujar todos los pósters ya aplicados con los ajustes actuales?'))return;
- await guardar();await api('/api/aplicar',a==='todo'?{}:a==='forzar'?{forzar:true}:{limite:+a});toast('En marcha…')});
-// estado
-async function estado(){try{const e=await api('/api/estado');
- const ci=$('#cImdb');ci.className='chip '+(e.imdb?'ok':'warn');ci.lastChild.textContent=e.imdb?` IMDb ${e.imdb.toLocaleString('es')}`:' IMDb sin descargar';
- const ca=$('#cApl');ca.className='chip ok';ca.lastChild.textContent=` Emby ${e.aplicados.emby||0} · Jellyfin ${e.aplicados.jellyfin||0}`;
- const ce=$('#cEst');ce.className='chip '+(e.activo?'warn':'');ce.lastChild.textContent=e.activo?` ${e.hecho}/${e.total}`:' Parado';
- $('#barra').style.width=e.total?(100*e.hecho/e.total)+'%':'0';$('#estTxt').textContent=e.activo?`En marcha: ${e.hecho} de ${e.total} · ${e.ultimo} · errores: ${e.errores}`:(e.total?`Última pasada: ${e.hecho} de ${e.total}, errores: ${e.errores}`:'Sin pasadas todavía');
- $('#log').textContent=e.log.slice().reverse().join('\n')||'—';
- const rc=$('#recientes'),firma=e.recientes.map(r=>r.id).join();if(rc.dataset.f!==firma){rc.dataset.f=firma;rc.innerHTML=e.recientes.map(r=>`<figure data-s="${r.srv}" data-i="${r.id}"><img loading="lazy" src="/api/preview?srv=${r.srv}&id=${r.id}&w=180"><figcaption>${r.titulo}</figcaption></figure>`).join('')||'<small style="color:var(--dim)">Nada aplicado aún.</small>';
-  rc.querySelectorAll('figure').forEach(f=>f.onclick=()=>elegir(f.dataset.s,f.dataset.i))}
-}catch(_){}setTimeout(estado,2500)}
-async function cargar(){[M,C]=await Promise.all([api('/api/meta'),api('/api/config')]);G=JSON.parse(JSON.stringify(C));
- const cm=$('#cMdb');cm.className='chip '+(M.mdblist?'ok':'warn');cm.lastChild.textContent=M.mdblist?' MDBList activo':' MDBList sin clave';enlazar();sucio();temas();presets()}
-cargar().then(()=>{$('#q').value='Dune';buscar()});estado();
-</script></body></html>
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--txt);
+  font: 14px/1.55 'Inter', system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select { font: inherit; color: inherit; }
+
+/* Cabecera */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 28px;
+  background: rgba(9, 10, 15, 0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--line);
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.03em;
+}
+.logo b {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f5c518, #ff9f1c);
+  color: #000;
+  font-size: 17px;
+  box-shadow: 0 4px 14px rgba(245, 197, 24, 0.35);
+}
+.logo span.ver {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--dim);
+  background: var(--card2);
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+}
+.chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-radius: 99px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--dim);
+  font-size: 12px;
+  font-weight: 600;
+}
+.chip i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--dim2);
+}
+.chip.ok i { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+.chip.warn i { background: var(--acc); box-shadow: 0 0 8px var(--acc); }
+.chip.active i { background: var(--blue); animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--line2);
+  background: var(--card2);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.btn:hover {
+  background: var(--card-hover);
+  border-color: var(--dim);
+  transform: translateY(-1px);
+}
+.btn.pri {
+  background: linear-gradient(135deg, var(--acc), #ff9f1c);
+  border-color: var(--acc);
+  color: #000;
+  box-shadow: 0 4px 14px rgba(245, 197, 24, 0.25);
+}
+.btn.pri:hover {
+  background: linear-gradient(135deg, var(--acc2), #ffa726);
+  box-shadow: 0 6px 18px rgba(245, 197, 24, 0.4);
+}
+.btn.bad {
+  color: var(--bad);
+  border-color: rgba(244, 63, 94, 0.3);
+  background: var(--badbg);
+}
+.btn.bad:hover {
+  border-color: var(--bad);
+  background: rgba(244, 63, 94, 0.2);
+}
+.btn.sm { padding: 6px 12px; font-size: 12px; border-radius: 8px; }
+.btn:disabled { opacity: 0.45; cursor: default; transform: none; box-shadow: none; }
+
+.sucio {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  color: var(--acc);
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--accbg);
+  padding: 4px 10px;
+  border-radius: 99px;
+  border: 1px solid rgba(245, 197, 24, 0.3);
+}
+.sucio.on { display: inline-flex; animation: pulse 2s infinite; }
+
+/* Contenedor Principal */
+.wrap {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr) 440px;
+  gap: 24px;
+  padding: 24px 28px;
+  max-width: 1680px;
+  margin: 0 auto;
+}
+@media (max-width: 1300px) {
+  .wrap { grid-template-columns: 210px 1fr; }
+  .vista { grid-column: 1 / -1; order: -1; position: static !important; }
+}
+@media (max-width: 800px) {
+  .wrap { grid-template-columns: 1fr; padding: 16px; }
+  nav { flex-direction: row !important; overflow-x: auto; position: static !important; }
+  nav a { white-space: nowrap; }
+}
+
+/* Menú Lateral */
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  position: sticky;
+  top: 80px;
+  align-self: start;
+}
+nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 11px;
+  color: var(--dim);
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+}
+nav a:hover {
+  background: var(--card);
+  color: var(--txt);
+}
+nav a.on {
+  background: var(--accbg);
+  color: var(--acc);
+  border-color: rgba(245, 197, 24, 0.3);
+}
+nav a span { font-size: 16px; width: 22px; text-align: center; }
+
+/* Pestañas */
+.pane { display: none; animation: fade 0.25s ease; }
+.pane.on { display: block; }
+@keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+h2 { margin: 0 0 6px; font-size: 24px; font-weight: 800; letter-spacing: -0.03em; }
+.sub { color: var(--dim); margin: 0 0 20px; font-size: 13px; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 20px;
+  margin-bottom: 18px;
+}
+.card h3 {
+  margin: 0 0 16px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--dim);
+  font-weight: 800;
+}
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 22px; }
+@media (max-width: 900px) { .grid2 { grid-template-columns: 1fr; } }
+
+.campo { display: flex; flex-direction: column; gap: 7px; }
+.campo > span { font-weight: 600; font-size: 13px; }
+.campo small { color: var(--dim2); font-size: 12px; }
+
+.fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+.fila:first-of-type { border-top: 0; }
+.fila b { font-weight: 600; font-size: 14px; }
+.fila small { display: block; color: var(--dim2); font-size: 12px; font-weight: 400; margin-top: 2px; }
+
+select, input[type=text], input[type=number], input[type=time] {
+  background: var(--bg2);
+  border: 1px solid var(--line2);
+  border-radius: 9px;
+  padding: 8px 12px;
+  outline: none;
+  color: var(--txt);
+  transition: border-color 0.15s;
+}
+select:focus, input:focus { border-color: var(--acc); }
+input[type=color] {
+  width: 44px;
+  height: 36px;
+  border: 1px solid var(--line2);
+  border-radius: 9px;
+  background: var(--bg2);
+  padding: 3px;
+  cursor: pointer;
+}
+
+/* Switches */
+.sw { position: relative; width: 44px; height: 24px; flex: none; }
+.sw input { opacity: 0; width: 0; height: 0; }
+.sw i {
+  position: absolute;
+  inset: 0;
+  border-radius: 99px;
+  background: var(--line2);
+  transition: 0.2s;
+  cursor: pointer;
+}
+.sw i:after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  transition: 0.2s;
+}
+.sw input:checked + i { background: var(--acc); }
+.sw input:checked + i:after { transform: translateX(20px); background: #000; }
+
+/* Sliders con indicador numérico */
+.rng { display: flex; align-items: center; gap: 14px; }
+.rng input[type=range] {
+  flex: 1;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--line2);
+  accent-color: var(--acc);
+  outline: none;
+  cursor: pointer;
+}
+.rng output {
+  min-width: 46px;
+  text-align: right;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  color: var(--dim);
+}
+
+/* Segmented Controls */
+.seg {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--bg2);
+  border: 1px solid var(--line2);
+  gap: 2px;
+}
+.seg button {
+  border: 0;
+  background: transparent;
+  padding: 6px 12px;
+  border-radius: 7px;
+  color: var(--dim);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 12px;
+  transition: 0.15s;
+}
+.seg button:hover { color: var(--txt); }
+.seg button.on {
+  background: var(--card2);
+  color: var(--txt);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Galería de temas y presets */
+.temas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(136px, 1fr));
+  gap: 14px;
+}
+.tema {
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--bg2);
+  transition: all 0.15s ease;
+  position: relative;
+}
+.tema:hover {
+  border-color: var(--dim2);
+  transform: translateY(-2px);
+}
+.tema.on {
+  border-color: var(--acc);
+  box-shadow: 0 0 0 4px var(--accbg);
+}
+.tema img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  background: #000;
+}
+.tema div {
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* Selector de posición */
+.posmap {
+  position: relative;
+  width: 160px;
+  aspect-ratio: 2 / 3;
+  border-radius: 12px;
+  background: linear-gradient(160deg, #2a2e40, #141622);
+  border: 1px solid var(--line2);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+.posmap button {
+  position: absolute;
+  width: 32px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1px solid var(--line2);
+  background: rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.posmap button:hover { border-color: var(--acc); }
+.posmap button.on {
+  background: var(--acc);
+  border-color: var(--acc);
+  box-shadow: 0 0 10px rgba(245, 197, 24, 0.5);
+}
+
+/* Listas ordenables */
+.orden {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.orden li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg2);
+  user-select: none;
+  transition: border-color 0.15s;
+}
+.orden li.off { opacity: 0.45; }
+.orden li.drag { opacity: 0.35; border-style: dashed; }
+.orden li.over { border-color: var(--acc); background: var(--accbg); }
+.orden .asa {
+  color: var(--dim2);
+  font-size: 18px;
+  cursor: grab;
+  padding: 0 4px;
+}
+.orden .flechas {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.orden .flechas button {
+  background: var(--card2);
+  border: 1px solid var(--line);
+  color: var(--dim);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 9px;
+  cursor: pointer;
+}
+.orden .flechas button:hover {
+  color: var(--txt);
+  border-color: var(--dim);
+}
+.orden .nom {
+  flex: 1;
+  font-weight: 600;
+  font-size: 13px;
+}
+.orden .tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dim);
+  background: var(--card2);
+  border: 1px solid var(--line2);
+  padding: 3px 8px;
+  border-radius: 99px;
+}
+
+/* Panel Vista Previa (Derecha) */
+.vista {
+  position: sticky;
+  top: 80px;
+  align-self: start;
+}
+.marco {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid var(--line2);
+  aspect-ratio: 2 / 3;
+  box-shadow: 0 25px 60px -20px rgba(0, 0, 0, 0.9);
+}
+.marco img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.2s;
+}
+.marco .ori {
+  clip-path: inset(0 calc(100% - var(--corte, 100%)) 0 0);
+}
+.marco .divisor {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--corte, 100%);
+  width: 2px;
+  background: var(--acc);
+  box-shadow: 0 0 10px rgba(245, 197, 24, 0.8);
+  pointer-events: none;
+}
+.marco .carga {
+  position: absolute;
+  inset: auto 14px 14px auto;
+  padding: 6px 12px;
+  border-radius: 99px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line2);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--acc);
+  display: none;
+}
+.marco.cargando .carga { display: block; animation: pulse 1s infinite; }
+.vacio {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--dim2);
+  text-align: center;
+  padding: 30px;
+  font-weight: 500;
+}
+
+.antes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+}
+.antes input {
+  flex: 1;
+  accent-color: var(--acc);
+  cursor: pointer;
+}
+.antes small { color: var(--dim); font-size: 11px; font-weight: 600; text-transform: uppercase; }
+
+.busca { display: flex; gap: 8px; }
+.busca select { width: 100px; flex: none; }
+.busca input { flex: 1; }
+.resultados {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 180px;
+  overflow-y: auto;
+  margin-top: 8px;
+}
+.resultados div {
+  padding: 7px 11px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+}
+.resultados div:hover { background: var(--card2); }
+.resultados div.on {
+  background: var(--accbg);
+  color: var(--acc);
+  font-weight: 600;
+}
+.resultados em {
+  color: var(--dim2);
+  font-style: normal;
+  font-size: 12px;
+}
+
+.datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+.datos span {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 99px;
+  background: var(--card2);
+  border: 1px solid var(--line);
+  color: var(--dim);
+}
+.datos span b { color: var(--txt); }
+
+/* Acciones de Lote */
+.acciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 12px;
+}
+.accion {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg2);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+}
+.accion:hover {
+  border-color: var(--dim2);
+  transform: translateY(-1px);
+}
+.accion b { display: block; font-size: 14px; margin-bottom: 3px; }
+.accion small { color: var(--dim); font-size: 12px; }
+.accion.highlight {
+  border-color: rgba(245, 197, 24, 0.5);
+  background: linear-gradient(135deg, rgba(245, 197, 24, 0.15), rgba(255, 159, 28, 0.08));
+}
+.accion.highlight b { color: var(--acc); }
+.accion.pri {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: var(--okbg);
+}
+.accion.pri b { color: var(--ok); }
+.accion.bad {
+  border-color: rgba(244, 63, 94, 0.35);
+  background: var(--badbg);
+}
+.accion.bad b { color: var(--bad); }
+
+.progreso {
+  height: 10px;
+  background: var(--bg2);
+  border-radius: 99px;
+  overflow: hidden;
+  margin: 16px 0 8px;
+  border: 1px solid var(--line);
+}
+.progreso i {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--acc), #ff9f1c);
+  transition: width 0.4s ease;
+}
+#log {
+  height: 240px;
+  overflow-y: auto;
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font: 12px/1.6 'JetBrains Mono', Consolas, monospace;
+  color: var(--dim);
+  white-space: pre-wrap;
+}
+
+.recientes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 12px;
+}
+.recientes figure {
+  margin: 0;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.recientes figure:hover { transform: scale(1.04); }
+.recientes img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #000;
+}
+.recientes figcaption {
+  font-size: 11px;
+  color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 4px;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(40px);
+  opacity: 0;
+  background: var(--card2);
+  border: 1px solid var(--line2);
+  padding: 11px 20px;
+  border-radius: 12px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 60;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+}
+.toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <b>★</b>
+    <span>Póster Notas</span>
+    <span class="ver">v3.2</span>
+  </div>
+  <div class="chips">
+    <span class="chip" id="cImdb"><i></i>IMDb</span>
+    <span class="chip" id="cMdb"><i></i>MDBList</span>
+    <span class="chip" id="cApl"><i></i>Aplicados</span>
+    <span class="chip" id="cEst"><i></i>Parado</span>
+  </div>
+  <span class="sucio" id="sucio">● Cambios sin guardar</span>
+  <button class="btn" id="bReset" title="Restablecer todos los ajustes a los valores de fábrica">Restablecer</button>
+  <button class="btn pri" id="bGuardar">Guardar ajustes</button>
+</header>
+
+<div class="wrap">
+  <nav id="nav">
+    <a data-p="tema" class="on"><span>🎨</span>Tema</a>
+    <a data-p="notas"><span>⭐</span>Notas</a>
+    <a data-p="barra"><span>📐</span>Barra de notas</a>
+    <a data-p="insignias"><span>🏷️</span>Insignias</a>
+    <a data-p="imagen"><span>🖼️</span>Imagen</a>
+    <a data-p="biblio"><span>📚</span>Biblioteca</a>
+    <a data-p="aplicar"><span>🚀</span>Aplicar</a>
+  </nav>
+
+  <main>
+    <!-- TEMA -->
+    <section class="pane on" id="p-tema">
+      <h2>Tema y Apariencia</h2>
+      <p class="sub">Elige el estilo visual general de las notas en el póster. Las vistas previas usan el título actualmente seleccionado.</p>
+      
+      <div class="card">
+        <h3>Estilos prediseñados (Presets)</h3>
+        <p class="sub" style="margin-top:-8px">Un clic carga la combinación completa de tema, barra e insignias. Luego puedes ajustarlo a tu gusto.</p>
+        <div class="temas" id="presets"></div>
+      </div>
+
+      <div class="card">
+        <h3>Temas base</h3>
+        <div class="temas" id="temas"></div>
+      </div>
+
+      <div class="card">
+        <div class="fila">
+          <div>
+            <b>Versión clara (Light)</b>
+            <small>Fondo blanco semitransparente con tipografía oscura (estilo Light de RPDB)</small>
+          </div>
+          <label class="sw"><input type="checkbox" data-k="claro"><i></i></label>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOTAS -->
+    <section class="pane" id="p-notas">
+      <h2>Fuentes de Calificación</h2>
+      <p class="sub">Selecciona qué proveedores mostrar y en qué orden de prioridad.</p>
+      
+      <div class="card">
+        <h3>Fuentes de notas</h3>
+        <ul class="orden" id="fuentes"></ul>
+        <p class="sub" id="avisoMdb" style="margin:14px 0 0;font-size:12px"></p>
+      </div>
+
+      <div class="card">
+        <h3>Formato de las cifras</h3>
+        <div class="fila">
+          <div>
+            <b>Estilo del texto</b>
+            <small>textStyle de RPDB</small>
+          </div>
+          <div class="seg" data-seg="notas.formato">
+            <button data-v="0">7,4 · 75%</button>
+            <button data-v="1">Sobre 100</button>
+            <button data-v="2">Sin sufijos</button>
+          </div>
+        </div>
+        <div class="fila">
+          <div>
+            <b>Separador decimal con coma</b>
+            <small>Escribe 7,8 en lugar de 7.8 (estilo español)</small>
+          </div>
+          <label class="sw"><input type="checkbox" data-k="notas.decimales_coma"><i></i></label>
+        </div>
+        <div class="fila">
+          <div>
+            <b>Mínimo de votos en IMDb</b>
+            <small>Oculta la nota de IMDb si el título tiene pocos votos (RPDB usa 500)</small>
+          </div>
+          <input type="number" min="0" step="100" data-k="notas.min_votos_imdb" style="width:110px">
+        </div>
+        <div class="fila">
+          <div>
+            <b>Etiqueta personalizada</b>
+            <small>Texto libre como primera pastilla (p. ej. «ESTRENO» o «COLECCIÓN»)</small>
+          </div>
+          <input type="text" data-k="notas.etiqueta" maxlength="20" placeholder="Vacío = nada" style="width:160px">
+        </div>
+      </div>
+    </section>
+
+    <!-- BARRA DE NOTAS -->
+    <section class="pane" id="p-barra">
+      <h2>Barra de Notas</h2>
+      <p class="sub">Personaliza la geometría, colores, tipografía y efectos de la barra.</p>
+      
+      <div class="card">
+        <h3>Posición y escala</h3>
+        <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+          <div class="posmap" id="posBarra"></div>
+          <div style="flex:1;min-width:240px">
+            <div class="campo">
+              <span>Escala general de la fuente</span>
+              <div class="rng"><input type="range" min="0.6" max="1.5" step="0.05" data-k="barra.escala_fuente"><output></output></div>
+            </div>
+            <div class="campo" style="margin-top:10px">
+              <span>Opacidad del fondo</span>
+              <div class="rng"><input type="range" min="0.1" max="1.0" step="0.02" data-k="barra.opacidad"><output></output></div>
+            </div>
+            <div class="campo" style="margin-top:10px">
+              <span>Relleno interno (Padding)</span>
+              <div class="rng"><input type="range" min="4" max="28" step="1" data-k="barra.relleno"><output></output></div>
+            </div>
+            <div class="campo" style="margin-top:10px">
+              <span>Margen respecto al borde del póster</span>
+              <div class="rng"><input type="range" min="0" max="80" step="2" data-k="barra.margen"><output></output></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Forma, bordes e inclinación</h3>
+        <div class="fila">
+          <div>
+            <b>Redondeo de esquinas</b>
+            <small>Automático según el tema, píldora completa o píxeles personalizados</small>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div class="seg" id="segRedondeo">
+              <button data-v="default">Auto</button>
+              <button data-v="full">Completo</button>
+              <button data-v="px">Píxeles</button>
+            </div>
+            <input type="number" id="redondeoPx" min="0" max="60" style="width:70px">
+          </div>
+        </div>
+        <div class="fila">
+          <div>
+            <b>Inclinación geométrica (Estilo Deportivo)</b>
+            <small>Corta los bloques en paralelogramos deportivos nítidos</small>
+          </div>
+          <div class="seg" data-seg="barra.inclinacion">
+            <button data-v="no">Recto</button>
+            <button data-v="right">Inclinado dcha. ▰</button>
+            <button data-v="left">Inclinado izq. ▰</button>
+          </div>
+        </div>
+        <div class="fila">
+          <div>
+            <b>Borde exterior</b>
+            <small>Grosor del marco y color (0 = sin borde)</small>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="number" min="0" max="12" data-k="barra.borde" style="width:70px">
+            <input type="color" data-k="barra.color_borde">
+          </div>
+        </div>
+        <div class="fila">
+          <div><b>Lados con borde</b></div>
+          <div class="seg" data-seg="barra.lado_borde">
+            <button data-v="default">Todos</button>
+            <button data-v="left">Izq.</button>
+            <button data-v="right">Dcha.</button>
+            <button data-v="top">Arriba</button>
+            <button data-v="bottom">Abajo</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Colores y tipografía</h3>
+        <div class="fila">
+          <div><b>Color de fondo de las cajas</b></div>
+          <input type="color" data-k="barra.color">
+        </div>
+        <div class="fila">
+          <div><b>Color del texto y puntuaciones</b></div>
+          <input type="color" data-k="barra.color_texto">
+        </div>
+        <div class="fila">
+          <div><b>Estilo de los logotipos</b></div>
+          <div class="seg" data-seg="barra.logos">
+            <button data-v="normal">Pastilla</button>
+            <button data-v="redondo">Círculo</button>
+            <button data-v="no">Sin logos</button>
+          </div>
+        </div>
+        <div class="fila">
+          <div><b>Números en negrita extra (Black)</b></div>
+          <label class="sw"><input type="checkbox" data-k="barra.negrita"><i></i></label>
+        </div>
+        <div class="fila">
+          <div>
+            <b>Sombra y elevación 3D</b>
+            <small>Proyecta una sombra suave que garantiza legibilidad en fondos blancos</small>
+          </div>
+          <label class="sw"><input type="checkbox" data-k="barra.sombra"><i></i></label>
+        </div>
+      </div>
+    </section>
+
+    <!-- INSIGNIAS -->
+    <section class="pane" id="p-insignias">
+      <h2>Insignias de Calidad y Galardones</h2>
+      <p class="sub">Datos técnicos leídos directamente de las pistas de vídeo y audio del archivo, y premios vía Wikidata.</p>
+      
+      <div class="card">
+        <div class="fila">
+          <div>
+            <b>Activar insignias</b>
+            <small>Superpone sellos técnicos de resolución, HDR, Dolby Vision, códec, audio y premios</small>
+          </div>
+          <label class="sw"><input type="checkbox" data-k="insignias.activar"><i></i></label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Insignias activas y orden de prioridad</h3>
+        <p class="sub" style="margin-top:-8px">Usa las flechas o arrastra para ordenar qué insignias tienen prioridad si superan el máximo.</p>
+        <ul class="orden" id="tiposIns"></ul>
+      </div>
+
+      <div class="card">
+        <h3>Posición, escala y estilo</h3>
+        <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+          <div class="posmap" id="posIns"></div>
+          <div style="flex:1;min-width:240px">
+            <div class="fila">
+              <div><b>Paleta de color</b></div>
+              <div class="seg" data-seg="insignias.estilo">
+                <button data-v="nebula">Nebula</button>
+                <button data-v="oro">Oro</button>
+                <button data-v="plata">Plata</button>
+                <button data-v="color">Color</button>
+                <button data-v="normal">Grafito</button>
+              </div>
+            </div>
+            <div class="fila">
+              <div>
+                <b>Apilar verticalmente</b>
+                <small>En columna en lugar de fila horizontal</small>
+              </div>
+              <label class="sw"><input type="checkbox" data-k="insignias.apilar"><i></i></label>
+            </div>
+            <div class="fila">
+              <div><b>Número máximo de insignias</b></div>
+              <input type="number" min="1" max="8" data-k="insignias.max" style="width:70px">
+            </div>
+            <div class="campo" style="margin-top:10px">
+              <span>Tamaño de las insignias</span>
+              <div class="rng"><input type="range" min="0.6" max="1.5" step="0.05" data-k="insignias.escala"><output></output></div>
+            </div>
+            <div class="campo" style="margin-top:10px">
+              <span>Opacidad de las insignias</span>
+              <div class="rng"><input type="range" min="0.3" max="1.0" step="0.02" data-k="insignias.opacidad"><output></output></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- IMAGEN -->
+    <section class="pane" id="p-imagen">
+      <h2>Tratamiento de Imagen</h2>
+      <p class="sub">Determina la imagen de partida, calidad de compresión y formatos adicionales.</p>
+      
+      <div class="card">
+        <h3>Póster base</h3>
+        <div class="fila">
+          <div>
+            <b>Origen de la imagen original</b>
+            <small>«Sin texto» y «Por idioma» se descargan limpias desde TMDB si existen</small>
+          </div>
+          <div class="seg" data-seg="imagen.origen">
+            <button data-v="actual">Póster actual</button>
+            <button data-v="sin_texto">TMDB sin texto</button>
+            <button data-v="idioma">TMDB en idioma</button>
+          </div>
+        </div>
+        <div class="fila">
+          <div><b>Idioma preferido en TMDB</b></div>
+          <select data-k="imagen.idioma">
+            <option value="es">Español (España / Latam)</option>
+            <option value="en">Inglés</option>
+            <option value="fr">Francés</option>
+            <option value="it">Italiano</option>
+            <option value="de">Alemán</option>
+            <option value="pt">Portugués</option>
+            <option value="ja">Japonés</option>
+            <option value="ko">Coreano</option>
+          </select>
+        </div>
+        <div class="fila">
+          <div>
+            <b>Modo seguro (Fallback)</b>
+            <small>Si un título no tiene notas ni insignias, no modificar su póster</small>
+          </div>
+          <label class="sw"><input type="checkbox" data-k="imagen.fallback"><i></i></label>
+        </div>
+        <div class="fila">
+          <div>
+            <b>Aplicar notas en los fondos (Backdrops)</b>
+            <small>Graba las calificaciones en la esquina superior derecha del fondo (1920x1080)</small>
+          </div>
+          <label class="sw"><input type="checkbox" data-k="imagen.fondos"><i></i></label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Resolución y compresión</h3>
+        <div class="grid2">
+          <div class="campo">
+            <span>Anchura del póster generado</span>
+            <select data-k="imagen.ancho" data-num>
+              <option value="580">580 px (Medio · carga ultra rápida)</option>
+              <option value="1000">1000 px (Estándar recomendado)</option>
+              <option value="1280">1280 px (Alta definición)</option>
+              <option value="2000">2000 px (Máxima fidelidad 4K)</option>
+            </select>
+          </div>
+          <div class="campo">
+            <span>Calidad JPEG</span>
+            <div class="rng"><input type="range" min="70" max="100" step="1" data-k="imagen.jpg"><output></output></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BIBLIOTECA -->
+    <section class="pane" id="p-biblio">
+      <h2>Biblioteca y Automatización</h2>
+      <p class="sub">Configura en qué servidores multimedia actuar y la sincronización periódica.</p>
+      
+      <div class="card">
+        <h3>Servidores y medios</h3>
+        <div class="fila">
+          <div><b>Emby Server</b><small>http://192.168.1.25:8097</small></div>
+          <label class="sw"><input type="checkbox" data-k="servidores.emby"><i></i></label>
+        </div>
+        <div class="fila">
+          <div><b>Jellyfin Server</b><small>http://192.168.1.25:8096</small></div>
+          <label class="sw"><input type="checkbox" data-k="servidores.jellyfin"><i></i></label>
+        </div>
+        <div class="fila">
+          <div><b>Películas (Movies)</b></div>
+          <label class="sw"><input type="checkbox" data-k="tipos.Movie"><i></i></label>
+        </div>
+        <div class="fila">
+          <div><b>Series de TV</b><small>Usa los datos técnicos del episodio más reciente</small></div>
+          <label class="sw"><input type="checkbox" data-k="tipos.Series"><i></i></label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Pasada automática nocturna</h3>
+        <div class="fila">
+          <div>
+            <b>Activar actualización automática</b>
+            <small>Procesa títulos recién añadidos y notas de IMDb actualizadas</small>
+          </div>
+          <label class="sw"><input type="checkbox" data-k="auto.programado"><i></i></label>
+        </div>
+        <div class="fila">
+          <div><b>Hora de ejecución</b></div>
+          <input type="time" data-k="auto.hora">
+        </div>
+        <div class="fila">
+          <div>
+            <b>Pausa entre títulos (segundos)</b>
+            <small>Evita sobrecargar las APIs de Emby y Jellyfin</small>
+          </div>
+          <input type="number" min="0.1" step="0.1" data-k="auto.pausa_s" style="width:90px">
+        </div>
+        <div class="fila">
+          <div>
+            <b>Refrescar notas de MDBList cada (días)</b>
+          </div>
+          <input type="number" min="1" data-k="auto.refrescar_dias" style="width:90px">
+        </div>
+      </div>
+    </section>
+
+    <!-- APLICAR -->
+    <section class="pane" id="p-aplicar">
+      <h2>Ejecución y Tandas</h2>
+      <p class="sub">Todos los pósters originales se guardan en el servidor antes de aplicar. Se pueden revertir en cualquier momento con 1 clic.</p>
+      
+      <div class="card">
+        <h3>Acciones disponibles</h3>
+        <div class="acciones">
+          <button class="accion highlight" data-a="10">
+            <b>🧪 Probar con 10 títulos</b>
+            <small>Aplica a los 10 títulos más recientes aún sin notas</small>
+          </button>
+          <button class="accion" data-a="50">
+            <b>➕ Tanda de 50 títulos</b>
+            <small>Aplica de 50 en 50 con seguridad</small>
+          </button>
+          <button class="accion pri" data-a="todo">
+            <b>🚀 Toda la biblioteca</b>
+            <small>Procesa en segundo plano todos los títulos pendientes</small>
+          </button>
+          <button class="accion" data-a="forzar">
+            <b>🔄 Redibujar aplicados</b>
+            <small>Regenera con el nuevo estilo los que ya tienen notas</small>
+          </button>
+          <button class="accion bad" data-a="revertir">
+            <b>↩ Revertir TODO</b>
+            <small>Restaura los pósters originales en Emby y Jellyfin</small>
+          </button>
+        </div>
+
+        <div class="progreso"><i id="barraProgreso"></i></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+          <small id="estTxt" style="color:var(--dim);font-weight:600">—</small>
+          <small id="estCont" style="color:var(--dim2);font-family:'JetBrains Mono',monospace"></small>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Pósters aplicados recientemente</h3>
+        <p class="sub" style="margin-top:-8px">Haz clic en cualquier carátula para inspeccionarla o revertirla en el panel derecho.</p>
+        <div class="recientes" id="recientes"></div>
+      </div>
+
+      <div class="card">
+        <h3>Registro de actividad en vivo</h3>
+        <div id="log"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- PANEL VISTA PREVIA (DERECHA) -->
+  <aside class="vista">
+    <div class="card" style="padding:14px;margin-bottom:14px">
+      <div class="busca">
+        <select id="srv">
+          <option value="emby">Emby</option>
+          <option value="jellyfin">Jellyfin</option>
+        </select>
+        <input type="text" id="q" placeholder="Buscar película o serie…" autocomplete="off">
+      </div>
+      <div class="resultados" id="res"></div>
+    </div>
+
+    <div class="marco" id="marco">
+      <div class="vacio" id="vacio">
+        Busca un título arriba para ver la vista previa en vivo<br>con tus ajustes en tiempo real.
+      </div>
+      <img id="imgNueva" alt="">
+      <img id="imgOri" class="ori" alt="">
+      <div class="divisor" id="divisor"></div>
+      <span class="carga">Generando vista previa…</span>
+    </div>
+
+    <div class="antes">
+      <small>Antes</small>
+      <input type="range" id="corte" min="0" max="100" value="100">
+      <small>Después</small>
+    </div>
+
+    <div class="datos" id="datos"></div>
+
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="btn sm pri" id="bUno" disabled style="flex:1">Aplicar a este título</button>
+      <button class="btn sm bad" id="bRevUno" disabled>Revertir</button>
+    </div>
+  </aside>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+let C = {}, G = {}, M = {}, sel = null, tt = null, ttT = null;
+
+const get = (o, k) => k.split('.').reduce((a, b) => a?.[b], o);
+const put = (o, k, v) => {
+  const p = k.split('.');
+  let a = o;
+  p.slice(0, -1).forEach(x => a = a[x] ??= {});
+  a[p.at(-1)] = v;
+};
+
+const api = (u, b) => fetch(u, b !== undefined ? {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(b)
+} : {}).then(r => r.ok ? r.json() : Promise.reject(r));
+
+const toast = m => {
+  const t = $('#toast');
+  t.textContent = m;
+  t.classList.add('on');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('on'), 2800);
+};
+
+const sucio = () => {
+  const modificado = JSON.stringify(C) !== JSON.stringify(G);
+  $('#sucio').classList.toggle('on', modificado);
+};
+
+const cambio = () => {
+  sucio();
+  preview();
+  clearTimeout(ttT);
+  ttT = setTimeout(temas, 600);
+};
+
+const INS = {
+  res: 'Resolución (4K UHD, 1080p…)',
+  hdr_dv: 'HDR / HDR10+ / Dolby Vision',
+  audio: 'Audio (Atmos, DTS:X, DD+, canales)',
+  idioma: 'Idioma (🇪🇸 Español, DUAL, VOSE)',
+  premios: 'Premios y Galardones (🏆 Oscar, Emmy, Goya…)',
+  edad: 'Calificación por edad (TP, +12, +16, +18, PG-13…)',
+  fuente: 'Origen de la copia (Remux, BluRay, WEB-DL)',
+  codec: 'Códec de vídeo (H.265, AV1, H.264)',
+  edicion: 'Edición especial (Montaje director, Extendida…)',
+  imax: 'IMAX Enhanced',
+  '3d': '3D estereoscópico',
+  pais: 'Bandera del país de origen'
+};
+
+const NOMTEMA = {
+  pastillas: 'Pastillas (Nebula)',
+  'pastillas-barra': 'Pastillas en barra',
+  bar: 'Barra completa',
+  blocks: 'Bloques',
+  'rounded-blocks': 'Bloques redondos',
+  boxes: 'Cajas (2 pisos)',
+  'sharp-blocks': 'Bloques rectos',
+  'stripes-left': 'Franjas izquierda',
+  'stripes-right': 'Franjas derecha'
+};
+
+// Navegación entre pestañas
+$$('#nav a').forEach(a => a.onclick = () => {
+  $$('#nav a').forEach(x => x.classList.toggle('on', x === a));
+  $$('.pane').forEach(p => p.classList.toggle('on', p.id === 'p-' + a.dataset.p));
+  if (a.dataset.p === 'tema') { temas(); presets(); }
+});
+
+// Enlace bidireccional de controles con objeto de configuración
+function enlazar() {
+  $$('[data-k]').forEach(e => {
+    const k = e.dataset.k;
+    const v = get(C, k);
+    if (e.type === 'checkbox') e.checked = !!v;
+    else e.value = v ?? '';
+
+    const out = e.parentElement.querySelector('output');
+    if (out) out.textContent = e.value;
+
+    e.oninput = () => {
+      let val = e.type === 'checkbox' ? e.checked : (e.type === 'range' || e.type === 'number' || 'num' in e.dataset) ? +e.value : e.value;
+      put(C, k, val);
+      if (out) out.textContent = e.value;
+      cambio();
+    };
+  });
+
+  $$('[data-seg]').forEach(s => {
+    const k = s.dataset.seg;
+    [...s.children].forEach(b => {
+      b.classList.toggle('on', String(get(C, k)) === b.dataset.v);
+      b.onclick = () => {
+        const val = isNaN(+b.dataset.v) || b.dataset.v === '' ? b.dataset.v : +b.dataset.v;
+        put(C, k, val);
+        [...s.children].forEach(x => x.classList.toggle('on', x === b));
+        cambio();
+      };
+    });
+  });
+
+  // Control especial de redondeo (auto / full / px)
+  const r = C.barra.redondeo;
+  const seg = $('#segRedondeo');
+  const px = $('#redondeoPx');
+  const modo = (r === 'default' || r === 'full') ? r : 'px';
+  [...seg.children].forEach(b => {
+    b.classList.toggle('on', b.dataset.v === modo);
+    b.onclick = () => {
+      [...seg.children].forEach(x => x.classList.toggle('on', x === b));
+      C.barra.redondeo = b.dataset.v === 'px' ? (+px.value || 12) : b.dataset.v;
+      px.disabled = b.dataset.v !== 'px';
+      cambio();
+    };
+  });
+  px.value = modo === 'px' ? r : 12;
+  px.disabled = modo !== 'px';
+  px.oninput = () => { C.barra.redondeo = +px.value; cambio(); };
+
+  // Mapas visuales de posición
+  posmapa('#posBarra', 'barra.posicion', [
+    ['top', 50, 6], ['left-top', 10, 16], ['right-top', 90, 16],
+    ['left-center', 10, 50], ['right-center', 90, 50],
+    ['left-bottom', 10, 84], ['right-bottom', 90, 84],
+    ['bottom', 50, 94]
+  ]);
+  posmapa('#posIns', 'insignias.posicion', [
+    ['left', 14, 6], ['center', 50, 6], ['right', 86, 6],
+    ['bottom|left', 14, 94], ['bottom|center', 50, 94], ['bottom|right', 86, 94]
+  ]);
+
+  listaFuentes();
+  listaIns();
+}
+
+function posmapa(selector, k, pts) {
+  const m = $(selector);
+  m.innerHTML = '';
+  pts.forEach(([v, x, y]) => {
+    const b = document.createElement('button');
+    b.title = v;
+    b.style.left = `calc(${x}% - 16px)`;
+    b.style.top = `calc(${y}% - 12px)`;
+    b.classList.toggle('on', get(C, k) === v);
+    b.onclick = () => {
+      put(C, k, v);
+      [...m.children].forEach(c => c.classList.toggle('on', c === b));
+      cambio();
+    };
+    m.appendChild(b);
+  });
+}
+
+// Lista ordenable robusta (con drag-and-drop Y flechas de subir/bajar)
+function ordenable(ul, arr, todos, nombre, bloqueado, onc) {
+  ul.innerHTML = '';
+  // Asegurar que ningún elemento válido quede fuera de la vista
+  const lista = [...arr, ...todos.filter(k => !arr.includes(k))];
+  let arr2 = [...arr];
+
+  lista.forEach((k, idx) => {
+    const li = document.createElement('li');
+    const on = arr2.includes(k);
+    const lock = bloqueado(k);
+    li.draggable = true;
+    li.dataset.k = k;
+    li.className = (on ? '' : 'off') + (lock ? ' lock' : '');
+
+    li.innerHTML = `
+      <span class="asa" title="Arrastra para reordenar">⠿</span>
+      <div class="flechas">
+        <button class="b-up" title="Subir">▲</button>
+        <button class="b-dn" title="Bajar">▼</button>
+      </div>
+      <span class="nom">${nombre(k)}</span>
+      ${lock ? '<span class="tag">requiere MDBList</span>' : ''}
+      <label class="sw"><input type="checkbox" ${on ? 'checked' : ''}><i></i></label>
+    `;
+
+    // Toggle switch
+    li.querySelector('input').onchange = e => {
+      if (e.target.checked) {
+        if (!arr2.includes(k)) arr2.push(k);
+      } else {
+        arr2 = arr2.filter(x => x !== k);
+      }
+      onc(arr2);
+    };
+
+    // Botones subir / bajar
+    li.querySelector('.b-up').onclick = () => {
+      const pos = arr2.indexOf(k);
+      if (pos > 0) {
+        const tmp = arr2[pos - 1];
+        arr2[pos - 1] = k;
+        arr2[pos] = tmp;
+        onc(arr2);
+      }
+    };
+    li.querySelector('.b-dn').onclick = () => {
+      const pos = arr2.indexOf(k);
+      if (pos !== -1 && pos < arr2.length - 1) {
+        const tmp = arr2[pos + 1];
+        arr2[pos + 1] = k;
+        arr2[pos] = tmp;
+        onc(arr2);
+      }
+    };
+
+    // Drag and drop HTML5
+    li.ondragstart = () => li.classList.add('drag');
+    li.ondragend = () => {
+      li.classList.remove('drag');
+      const orden = [...ul.children].map(x => x.dataset.k).filter(x => arr2.includes(x));
+      if (orden.length === arr2.length && orden.join() !== arr2.join()) {
+        onc(orden);
+      }
+    };
+    li.ondragover = e => {
+      e.preventDefault();
+      const d = ul.querySelector('.drag');
+      if (d && d !== li) {
+        const r = li.getBoundingClientRect();
+        ul.insertBefore(d, e.clientY < r.top + r.height / 2 ? li : li.nextSibling);
+      }
+    };
+
+    ul.appendChild(li);
+  });
+}
+
+function listaFuentes() {
+  ordenable(
+    $('#fuentes'),
+    C.notas.fuentes || ['imdb', 'rt', 'tmdb'],
+    Object.keys(M.fuentes || {}),
+    k => M.fuentes[k] || k,
+    k => !M.mdblist && (M.requieren_mdblist || []).includes(k),
+    v => { C.notas.fuentes = v; listaFuentes(); cambio(); }
+  );
+  $('#avisoMdb').textContent = M.mdblist
+    ? '✔ MDBList activo: todas las fuentes y críticas están disponibles.'
+    : 'Sin clave de MDBList: IMDb, Rotten Tomatoes (crítica), TMDB y la Media de todas funcionan libremente sin necesidad de clave externa.';
+}
+
+function listaIns() {
+  if (!C.insignias.lista || !C.insignias.lista.length) {
+    C.insignias.lista = ['res', 'hdr_dv', 'audio', 'idioma', 'premios', 'edad'];
+  }
+  ordenable(
+    $('#tiposIns'),
+    C.insignias.lista,
+    Object.keys(INS),
+    k => INS[k] || k,
+    () => false,
+    v => { C.insignias.lista = v; listaIns(); cambio(); }
+  );
+}
+
+// Galería de temas
+function temas() {
+  const g = $('#temas');
+  if (!g.children.length && M.temas) {
+    M.temas.forEach(t => {
+      const d = document.createElement('div');
+      d.className = 'tema';
+      d.dataset.t = t;
+      d.innerHTML = `<img alt="" loading="lazy"><div>${NOMTEMA[t] || t}</div>`;
+      d.onclick = () => {
+        C.tema = t;
+        marcaTema();
+        cambio();
+      };
+      g.appendChild(d);
+    });
+  }
+  marcaTema();
+  if (!sel || !$('#p-tema').classList.contains('on')) return;
+
+  $$('#temas .tema').forEach(d => {
+    const c = JSON.parse(JSON.stringify(C));
+    c.tema = d.dataset.t;
+    d.querySelector('img').src = `/api/preview?srv=${sel.srv}&id=${sel.id}&w=240&conf=${encodeURIComponent(JSON.stringify(c))}`;
+  });
+}
+
+function fusion(a, b) {
+  for (const k in b) {
+    if (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k])) {
+      fusion(a[k] ??= {}, b[k]);
+    } else {
+      a[k] = b[k];
+    }
+  }
+  return a;
+}
+
+// Galería de presets
+function presets() {
+  const g = $('#presets');
+  if (!g.children.length && M.presets) {
+    M.presets.forEach((p, i) => {
+      const d = document.createElement('div');
+      d.className = 'tema';
+      d.dataset.i = i;
+      d.title = p.desc;
+      d.innerHTML = `<img alt="" loading="lazy"><div>${p.nombre}<br><small style="color:var(--dim2);font-weight:400">${p.desc}</small></div>`;
+      d.onclick = () => {
+        fusion(C, JSON.parse(JSON.stringify(p.conf)));
+        enlazar();
+        marcaTema();
+        $$('#presets .tema').forEach(x => x.classList.toggle('on', x === d));
+        cambio();
+        toast('Estilo «' + p.nombre + '» cargado (listo para previsualizar)');
+      };
+      g.appendChild(d);
+    });
+  }
+  if (!sel) return;
+  $$('#presets .tema').forEach(d => {
+    const c = fusion(JSON.parse(JSON.stringify(C)), M.presets[d.dataset.i].conf);
+    d.querySelector('img').src = `/api/preview?srv=${sel.srv}&id=${sel.id}&w=240&conf=${encodeURIComponent(JSON.stringify(c))}`;
+  });
+}
+
+const marcaTema = () => $$('#temas .tema').forEach(d => d.classList.toggle('on', d.dataset.t === C.tema));
+
+// Vista previa interactiva
+function preview() {
+  if (!sel) return;
+  clearTimeout(tt);
+  tt = setTimeout(() => {
+    const m = $('#marco');
+    m.classList.add('cargando');
+    const img = new Image();
+    img.onload = () => {
+      $('#imgNueva').src = img.src;
+      m.classList.remove('cargando');
+    };
+    img.onerror = () => {
+      m.classList.remove('cargando');
+      toast('No se pudo generar la vista previa');
+    };
+    img.src = `/api/preview?srv=${sel.srv}&id=${sel.id}&w=860&conf=${encodeURIComponent(JSON.stringify(C))}&_=${Date.now()}`;
+  }, 260);
+}
+
+// Deslizador interactivo antes / después
+$('#corte').oninput = e => {
+  const val = e.target.value;
+  $('#marco').style.setProperty('--corte', (100 - val) + '%');
+};
+
+async function elegir(srv, id) {
+  sel = { srv, id };
+  $('#vacio').style.display = 'none';
+  $('#bUno').disabled = $('#bRevUno').disabled = false;
+  $('#imgOri').src = `/api/original?srv=${srv}&id=${id}&w=860&_=${Date.now()}`;
+  $('#corte').value = 100;
+  $('#marco').style.setProperty('--corte', '0%');
+  preview();
+  temas();
+  presets();
+
+  try {
+    const d = await api(`/api/detalle?srv=${srv}&id=${id}`);
+    const N = {
+      imdb: 'IMDb', rt: 'RT', tmdb: 'TMDB', mc: 'MC', mc_pub: 'MC usuarios',
+      rt_pub: 'RT público', lb: 'Letterboxd', trakt: 'Trakt', ebert: 'Ebert',
+      mal: 'MAL', mdblist: 'MDBList', media: 'Media'
+    };
+    const notasHtml = Object.entries(d.notas).map(([k, v]) => `<span>${N[k] || k} <b>${v}</b></span>`).join('');
+    const calHtml = Object.entries(d.calidad).map(([k, v]) => `<span>${k} <b>${v === true ? 'sí' : v}</b></span>`).join('');
+    const aplHtml = d.aplicado ? '<span style="color:var(--ok);border-color:rgba(16,185,129,0.3)">● aplicado</span>' : '';
+    $('#datos').innerHTML = notasHtml + calHtml + aplHtml;
+  } catch (_) {}
+}
+
+let tb;
+$('#q').oninput = () => {
+  clearTimeout(tb);
+  tb = setTimeout(buscar, 280);
+};
+$('#srv').onchange = buscar;
+
+async function buscar() {
+  const srv = $('#srv').value;
+  const q = $('#q').value;
+  const r = await api(`/api/buscar?srv=${srv}&q=${encodeURIComponent(q)}`);
+  const box = $('#res');
+  box.innerHTML = '';
+  r.forEach(x => {
+    const d = document.createElement('div');
+    d.innerHTML = `<span>${x.nombre}</span><em>${x.anio || ''} · ${x.tipo === 'Movie' ? 'peli' : 'serie'}</em>`;
+    d.onclick = () => {
+      [...box.children].forEach(c => c.classList.remove('on'));
+      d.classList.add('on');
+      elegir(srv, x.id);
+    };
+    box.appendChild(d);
+  });
+  if (!sel && r[0]) box.children[0].click();
+}
+
+// Guardar configuración
+async function guardar() {
+  await api('/api/config', C);
+  G = JSON.parse(JSON.stringify(C));
+  sucio();
+  toast('Ajustes guardados correctamente ✔');
+}
+$('#bGuardar').onclick = guardar;
+
+$('#bReset').onclick = async () => {
+  if (!confirm('¿Restablecer todos los ajustes a los valores iniciales de fábrica?')) return;
+  await api('/api/config/reset', {});
+  await cargar();
+  toast('Ajustes restablecidos a fábrica');
+};
+
+window.onbeforeunload = e => {
+  if (JSON.stringify(C) !== JSON.stringify(G)) {
+    e.preventDefault();
+    return '';
+  }
+};
+
+// Acciones de un solo título
+$('#bUno').onclick = async () => {
+  await guardar();
+  $('#bUno').disabled = true;
+  toast('Aplicando al título…');
+  const r = await api('/api/aplicar_uno', sel);
+  toast('Resultado: ' + r.res);
+  $('#bUno').disabled = false;
+  elegir(sel.srv, sel.id);
+};
+
+$('#bRevUno').onclick = async () => {
+  $('#bRevUno').disabled = true;
+  const r = await api('/api/revertir', sel);
+  toast(r.res === 'revertido' ? 'Póster original restaurado' : 'Este título no tenía notas aplicadas');
+  $('#bRevUno').disabled = false;
+  elegir(sel.srv, sel.id);
+};
+
+// Acciones en lote
+$$('.accion').forEach(b => b.onclick = async () => {
+  const a = b.dataset.a;
+  if (a === 'revertir') {
+    if (confirm('¿Restaurar TODOS los pósters originales en Emby y Jellyfin?')) {
+      await api('/api/revertir', { todo: true });
+      toast('Restaurando pósters originales en segundo plano…');
+    }
+    return;
+  }
+  if (a === 'todo' && !confirm('¿Aplicar notas a toda la biblioteca? Los pósters originales se conservan intactos para poder revertir.')) return;
+  if (a === 'forzar' && !confirm('¿Redibujar todos los pósters ya aplicados con los ajustes y diseño actuales?')) return;
+  if (a === '10' && !confirm('¿Aplicar prueba en los 10 títulos más recientes?')) return;
+
+  await guardar();
+  await api('/api/aplicar', a === 'todo' ? {} : a === 'forzar' ? { forzar: true } : { limite: +a });
+  toast('Procesamiento en marcha…');
+});
+
+// Sondeo de estado del proceso en segundo plano
+async function estado() {
+  try {
+    const e = await api('/api/estado');
+    const ci = $('#cImdb');
+    ci.className = 'chip ' + (e.imdb ? 'ok' : 'warn');
+    ci.lastChild.textContent = e.imdb ? ` IMDb ${e.imdb.toLocaleString('es')}` : ' IMDb sin descargar';
+
+    const ca = $('#cApl');
+    ca.className = 'chip ok';
+    ca.lastChild.textContent = ` Emby ${e.aplicados.emby || 0} · Jellyfin ${e.aplicados.jellyfin || 0}`;
+
+    const ce = $('#cEst');
+    ce.className = 'chip ' + (e.activo ? 'active' : '');
+    ce.lastChild.textContent = e.activo ? ` ${e.hecho}/${e.total}` : ' Parado';
+
+    $('#barraProgreso').style.width = e.total ? (100 * e.hecho / e.total) + '%' : '0%';
+    $('#estTxt').textContent = e.activo
+      ? `En marcha: ${e.hecho} de ${e.total} · ${e.ultimo || ''}`
+      : (e.total ? `Última tanda: ${e.hecho} de ${e.total} completados (errores: ${e.errores})` : 'Sin pasadas recientes');
+    $('#estCont').textContent = e.total ? `${Math.round(100 * e.hecho / e.total)}%` : '';
+
+    $('#log').textContent = e.log.slice().reverse().join('\n') || '—';
+
+    // Galería de recientes
+    const rc = $('#recientes');
+    const firma = e.recientes.map(r => r.id).join();
+    if (rc.dataset.f !== firma) {
+      rc.dataset.f = firma;
+      rc.innerHTML = e.recientes.map(r => `
+        <figure data-s="${r.srv}" data-i="${r.id}" title="${r.titulo}">
+          <img loading="lazy" src="/api/preview?srv=${r.srv}&id=${r.id}&w=200">
+          <figcaption>${r.titulo}</figcaption>
+        </figure>
+      `).join('') || '<small style="color:var(--dim)">Ningún póster aplicado todavía.</small>';
+
+      rc.querySelectorAll('figure').forEach(f => {
+        f.onclick = () => elegir(f.dataset.s, f.dataset.i);
+      });
+    }
+  } catch (_) {}
+  setTimeout(estado, 2500);
+}
+
+// Carga inicial
+async function cargar() {
+  [M, C] = await Promise.all([api('/api/meta'), api('/api/config')]);
+  G = JSON.parse(JSON.stringify(C));
+
+  const cm = $('#cMdb');
+  cm.className = 'chip ' + (M.mdblist ? 'ok' : 'warn');
+  cm.lastChild.textContent = M.mdblist ? ' MDBList activo' : ' MDBList sin clave';
+
+  enlazar();
+  sucio();
+  temas();
+  presets();
+}
+
+cargar().then(() => {
+  $('#q').value = 'Dune';
+  buscar();
+});
+estado();
+</script>
+</body>
+</html>
