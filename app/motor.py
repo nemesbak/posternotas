@@ -329,6 +329,9 @@ def listar(srv, tipos, buscar=None, limite=None):
 
 
 def item(srv, iid):
+    res = api(srv, f"/Items?Ids={iid}&Fields={CAMPOS}")
+    if res and res.get("Items"):
+        return res["Items"][0]
     return api(srv, f"/Users/{usuario_emby()}/Items/{iid}?Fields={CAMPOS}" if srv == "emby" else f"/Items/{iid}?Fields={CAMPOS}")
 
 
@@ -343,7 +346,8 @@ def par_jellyfin(it):
 
 def calidad_serie(srv, sid):
     try:
-        ep = api(srv, "/Items?" + urllib.parse.urlencode({"ParentId": sid, "Recursive": "true", "IncludeItemTypes": "Episode", "Fields": "MediaStreams,Path", "Limit": "1", "SortBy": "DateCreated", "SortOrder": "Descending"}))["Items"]
+        ep_res = api(srv, "/Items?" + urllib.parse.urlencode({"ParentId": sid, "Recursive": "true", "IncludeItemTypes": "Episode", "Fields": "MediaStreams,Path", "Limit": "1", "SortBy": "DateCreated", "SortOrder": "Descending"}))
+        ep = ep_res.get("Items", []) if ep_res else []
         q = calidad(ep[0]) if ep else {}
         # Incorporar premios y edad de la serie usando item() para evitar 404 en Emby
         sit = item(srv, sid)
