@@ -307,7 +307,7 @@ def calidad(item, ruta=""):
 
 
 # ---------- servidores ----------
-SRV = {"emby": "http://192.168.1.25:8097", "jellyfin": "http://192.168.1.25:8096"}
+SRV = {"emby": os.environ.get("EMBY_URL", "http://192.168.1.25:8097"), "jellyfin": os.environ.get("JELLYFIN_URL", "http://192.168.1.25:8096")}
 
 
 def api(srv, path, data=None, ctype=None, metodo=None, crudo=False):
