@@ -71,17 +71,21 @@ def _logo(d, x, y, h, f, estilo_logo, peso, escala, n100=75):
     if estilo_logo == "no":
         return 0
     et, fondo, txt, _ = FUENTES[f]
-    
-    # En Metacritic el fondo varía según la nota
+
+    # En Rotten Tomatoes crítico: rojo fresco (>=60%) o verde podrido (<60%)
+    if f == "rt":
+        fondo = "#FA320A" if n100 >= 60 else "#688A22"
+
+    # En Metacritic el fondo varía según la puntuación
     if f in ("mc", "mc_pub"):
         fondo = "#66CC33" if n100 >= 60 else "#FFCC33" if n100 >= 40 else "#FF0000"
         txt = "#000000" if n100 >= 40 else "#FFFFFF"
 
     fnt = fuente(h * 0.44 * escala, 2)
-    
+
     if estilo_logo == "redondo":
         d.ellipse([x, y, x + h, y + h], fill=hexa(fondo))
-        if f == "lb":  # 3 círculos Letterboxd
+        if f == "lb":  # 3 círculos oficiales Letterboxd
             r_dot = h * 0.12
             cy = y + h / 2
             d.ellipse([x + h * 0.28 - r_dot, cy - r_dot, x + h * 0.28 + r_dot, cy + r_dot], fill=hexa("#FF8000"))
@@ -154,7 +158,7 @@ def barra(img, notas, cf):
     pad = b["relleno"] * k
     mar = b["margen"] * k
     gap = 14 * k
-    pos = b["posicion"]
+    pos = b.get("posicion", "bottom")
     vertical = pos.startswith(("left", "right"))
     inclinacion = b.get("inclinacion", "no")
 
@@ -177,7 +181,8 @@ def barra(img, notas, cf):
         tot_h = len(items) * alto_caja + (len(items) - 1) * gap
         maxw = max(caja) + abs(slant_dx)
         x0 = mar + 18 * k if pos.startswith("left") else W - mar - 18 * k - maxw
-        y0 = {"top": mar + 18 * k, "center": (H - tot_h) / 2, "bottom": H - mar - 18 * k - tot_h}[pos.split("-")[1]]
+        y_side = pos.split("-")[1] if "-" in pos else "center"
+        y0 = {"top": mar + 18 * k, "center": (H - tot_h) / 2, "bottom": H - mar - 18 * k - tot_h}.get(y_side, (H - tot_h) / 2)
         coords = [(x0, y0 + i * (alto_caja + gap), maxw) for i in range(len(items))]
     else:
         tot_w = sum(caja) + gap * (len(items) - 1) + abs(slant_dx)
@@ -191,7 +196,15 @@ def barra(img, notas, cf):
             tot_w = sum(caja) + gap * (len(items) - 1) + abs(slant_dx)
 
         y0 = H - mar - 18 * k - alto_caja if pos.startswith("bottom") else mar + 18 * k
-        x = (W - tot_w) / 2
+
+        # Alineación horizontal: izquierda, derecha o centro
+        if pos in ("bottom-left", "top-left"):
+            x = mar + 18 * k
+        elif pos in ("bottom-right", "top-right"):
+            x = W - mar - 18 * k - tot_w
+        else:
+            x = (W - tot_w) / 2
+
         coords = []
         for c in caja:
             coords.append((x, y0, c))
@@ -220,14 +233,14 @@ def barra(img, notas, cf):
             et, col, col_txt, _ = FUENTES[f]
             rr = alto_caja * 0.32 if b["redondeo"] == "default" else r
             fondo_p = (12, 12, 16, 235) if tema == "pastillas-barra" else fondo
-            
+
             if slant_dx != 0:
                 poly = [(x + slant_dx, y), (x + w + slant_dx, y), (x + w, y + alto_caja), (x, y + alto_caja)]
                 d.polygon(poly, fill=fondo_p, outline=color_borde if borde > 0 else None, width=int(borde) if borde > 0 else 0)
             else:
                 d.rounded_rectangle([x, y, x + w, y + alto_caja], int(rr), fill=fondo_p,
                                     outline=color_borde if borde > 0 else None, width=int(borde) if borde > 0 else 0)
-            
+
             fnum = fuente(h * 0.6 * b["escala_fuente"], 2 if b["negrita"] else 1)
             vx = x + pad + (slant_dx / 2 if slant_dx != 0 else 0)
             if b["logos"] != "no":
@@ -258,6 +271,16 @@ def barra(img, notas, cf):
             if slant_dx != 0:
                 poly = [(x + slant_dx, y), (x + w + slant_dx, y), (x + w, y + alto_caja), (x, y + alto_caja)]
                 d.polygon(poly, fill=fondo, outline=color_borde if todo else None, width=int(borde) if todo else 0)
+                if borde > 0 and lado != "default":
+                    if lado == "left":
+                        d.line([(x + slant_dx, y), (x, y + alto_caja)], fill=color_borde, width=int(borde))
+                    elif lado == "right":
+                        d.line([(x + w + slant_dx, y), (x + w, y + alto_caja)], fill=color_borde, width=int(borde))
+                    elif lado == "top":
+                        d.line([(x + slant_dx, y), (x + w + slant_dx, y)], fill=color_borde, width=int(borde))
+                    elif lado == "bottom":
+                        d.line([(x, y + alto_caja), (x + w, y + alto_caja)], fill=color_borde, width=int(borde))
+
                 if tema.startswith("stripes"):
                     ancho_st = int(8 * k)
                     if tema == "stripes-left":
@@ -435,14 +458,23 @@ def insignias(img, q, cf):
     pos = ins.get("posicion", "right")
     vertical = ins.get("apilar", False) and pos in ("left", "right", "bottom|left", "bottom|right")
 
+    barra_pos = cf["barra"].get("posicion", "bottom")
+    offset_barra_y = (130 * k * cf["barra"].get("escala_fuente", 1.0)) if cf["notas"].get("fuentes") else 0
+
     if vertical:
         tot = len(lst) * h + gap * (len(lst) - 1)
-        y = m if not pos.startswith("bottom") else H - m - tot - (130 * k if cf["barra"]["posicion"].startswith("bottom") else 0)
+        if pos.startswith("bottom"):
+            y = H - m - tot - (offset_barra_y if barra_pos.startswith("bottom") else 0)
+        else:
+            y = m + (offset_barra_y if barra_pos.startswith("top") else 0)
         xs = [m if pos.endswith("left") else W - m - a for a in anchos]
         ys = [y + i * (h + gap) for i in range(len(lst))]
     else:
         tot = sum(anchos) + gap * (len(lst) - 1)
-        y = m if not pos.startswith("bottom") else H - m - h - (130 * k if cf["barra"]["posicion"].startswith("bottom") else 0)
+        if pos.startswith("bottom"):
+            y = H - m - h - (offset_barra_y if barra_pos.startswith("bottom") else 0)
+        else:
+            y = m + (offset_barra_y if barra_pos.startswith("top") else 0)
         lado = pos.split("|")[-1]
         x = m if lado == "left" else W - m - tot if lado == "right" else (W - tot) / 2
         xs, ys = [], []

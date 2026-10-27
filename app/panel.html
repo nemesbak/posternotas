@@ -403,14 +403,17 @@ input[type=color] {
   height: 24px;
   border-radius: 6px;
   border: 1px solid var(--line2);
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.65);
   cursor: pointer;
   transition: all 0.15s;
+  font-size: 10px;
+  color: var(--dim);
 }
-.posmap button:hover { border-color: var(--acc); }
+.posmap button:hover { border-color: var(--acc); color: #fff; }
 .posmap button.on {
   background: var(--acc);
   border-color: var(--acc);
+  color: #000;
   box-shadow: 0 0 10px rgba(245, 197, 24, 0.5);
 }
 
@@ -833,7 +836,7 @@ input[type=color] {
             </div>
             <div class="campo" style="margin-top:10px">
               <span>Opacidad del fondo</span>
-              <div class="rng"><input type="range" min="0.1" max="1.0" step="0.02" data-k="barra.opacidad"><output></output></div>
+              <div class="rng"><input type="range" min="0.05" max="1.0" step="0.02" data-k="barra.opacidad"><output></output></div>
             </div>
             <div class="campo" style="margin-top:10px">
               <span>Relleno interno (Padding)</span>
@@ -1266,6 +1269,27 @@ const NOMTEMA = {
   'stripes-right': 'Franjas derecha'
 };
 
+const NOMPOS = {
+  'top-left': 'Arriba izquierda',
+  'top': 'Arriba centro',
+  'top-right': 'Arriba derecha',
+  'left-top': 'Lateral izq. (arriba)',
+  'left-center': 'Lateral izq. (centro)',
+  'left-bottom': 'Lateral izq. (abajo)',
+  'right-top': 'Lateral dcha. (arriba)',
+  'right-center': 'Lateral dcha. (centro)',
+  'right-bottom': 'Lateral dcha. (abajo)',
+  'bottom-left': 'Abajo izquierda',
+  'bottom': 'Abajo centro',
+  'bottom-right': 'Abajo derecha',
+  'left': 'Arriba izquierda',
+  'center': 'Arriba centro',
+  'right': 'Arriba derecha',
+  'bottom|left': 'Abajo izquierda',
+  'bottom|center': 'Abajo centro',
+  'bottom|right': 'Abajo derecha'
+};
+
 // Navegación entre pestañas
 $$('#nav a').forEach(a => a.onclick = () => {
   $$('#nav a').forEach(x => x.classList.toggle('on', x === a));
@@ -1323,16 +1347,19 @@ function enlazar() {
   px.disabled = modo !== 'px';
   px.oninput = () => { C.barra.redondeo = +px.value; cambio(); };
 
-  // Mapas visuales de posición
+  // Mapas visuales de posición (10 posiciones completas para la barra)
   posmapa('#posBarra', 'barra.posicion', [
-    ['top', 50, 6], ['left-top', 10, 16], ['right-top', 90, 16],
-    ['left-center', 10, 50], ['right-center', 90, 50],
-    ['left-bottom', 10, 84], ['right-bottom', 90, 84],
-    ['bottom', 50, 94]
+    ['top-left', 14, 7], ['top', 50, 7], ['top-right', 86, 7],
+    ['left-top', 14, 30], ['right-top', 86, 30],
+    ['left-center', 14, 50], ['right-center', 86, 50],
+    ['left-bottom', 14, 70], ['right-bottom', 86, 70],
+    ['bottom-left', 14, 93], ['bottom', 50, 93], ['bottom-right', 86, 93]
   ]);
+
+  // Mapa de posición de insignias (6 posiciones)
   posmapa('#posIns', 'insignias.posicion', [
-    ['left', 14, 6], ['center', 50, 6], ['right', 86, 6],
-    ['bottom|left', 14, 94], ['bottom|center', 50, 94], ['bottom|right', 86, 94]
+    ['left', 14, 7], ['center', 50, 7], ['right', 86, 7],
+    ['bottom|left', 14, 93], ['bottom|center', 50, 93], ['bottom|right', 86, 93]
   ]);
 
   listaFuentes();
@@ -1344,7 +1371,7 @@ function posmapa(selector, k, pts) {
   m.innerHTML = '';
   pts.forEach(([v, x, y]) => {
     const b = document.createElement('button');
-    b.title = v;
+    b.title = NOMPOS[v] || v;
     b.style.left = `calc(${x}% - 16px)`;
     b.style.top = `calc(${y}% - 12px)`;
     b.classList.toggle('on', get(C, k) === v);
@@ -1360,11 +1387,10 @@ function posmapa(selector, k, pts) {
 // Lista ordenable robusta (con drag-and-drop Y flechas de subir/bajar)
 function ordenable(ul, arr, todos, nombre, bloqueado, onc) {
   ul.innerHTML = '';
-  // Asegurar que ningún elemento válido quede fuera de la vista
   const lista = [...arr, ...todos.filter(k => !arr.includes(k))];
   let arr2 = [...arr];
 
-  lista.forEach((k, idx) => {
+  lista.forEach(k => {
     const li = document.createElement('li');
     const on = arr2.includes(k);
     const lock = bloqueado(k);

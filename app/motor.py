@@ -31,6 +31,17 @@ DEFAULT = {
 _lock = threading.Lock()
 
 
+def get_id(it, clave):
+    """Obtiene un ProviderId de forma insensible a mayúsculas/minúsculas (Imdb, IMDB, Tmdb, TMDB...)."""
+    if not it:
+        return None
+    p = it.get("ProviderIds") or {}
+    for k in (clave, clave.upper(), clave.lower(), clave.capitalize()):
+        if p.get(k):
+            return str(p[k]).strip()
+    return None
+
+
 def _mezcla(base, u):
     for k, v in (u or {}).items():
         if isinstance(v, dict) and isinstance(base.get(k), dict):
@@ -46,7 +57,6 @@ def conf():
         _mezcla(c, json.load(open(CONF)))
     except Exception:
         pass
-    # Protección: si la lista de insignias quedó vacía o corrupta, restablecer lista por defecto
     if not c.get("insignias", {}).get("lista"):
         c.setdefault("insignias", {})["lista"] = list(DEFAULT_INSIGNIAS)
     return c
@@ -174,8 +184,7 @@ def buscar_premios(tt):
 
 def notas(item, jf=None):
     cf = conf()["notas"]
-    pid = item.get("ProviderIds") or {}
-    tt = pid.get("Imdb") or ((jf or {}).get("ProviderIds") or {}).get("Imdb")
+    tt = get_id(item, "Imdb") or get_id(jf, "Imdb")
     n = {}
     r = db().execute("select nota, votos from imdb where tt=?", (tt,)).fetchone() if tt else None
     if r and r[1] >= cf["min_votos_imdb"]:
@@ -288,8 +297,7 @@ def calidad(item, ruta=""):
     q["edad"] = parse_edad(item.get("OfficialRating"))
 
     # Premios (vía Wikidata)
-    pid = item.get("ProviderIds") or {}
-    tt = pid.get("Imdb")
+    tt = get_id(item, "Imdb")
     if tt:
         prem = buscar_premios(tt)
         if prem:
@@ -327,7 +335,8 @@ def item(srv, iid):
 def par_jellyfin(it):
     pid = it.get("ProviderIds") or {}
     for c in listar("jellyfin", [it["Type"]], it["Name"], 20):
-        if any(pid.get(k) and (c.get("ProviderIds") or {}).get(k) == pid.get(k) for k in ("Imdb", "Tmdb", "Tvdb")):
+        c_pid = c.get("ProviderIds") or {}
+        if any(get_id(it, k) and get_id(it, k) == get_id(c, k) for k in ("Imdb", "Tmdb", "Tvdb")):
             return c
     return None
 
@@ -336,10 +345,10 @@ def calidad_serie(srv, sid):
     try:
         ep = api(srv, "/Items?" + urllib.parse.urlencode({"ParentId": sid, "Recursive": "true", "IncludeItemTypes": "Episode", "Fields": "MediaStreams,Path", "Limit": "1", "SortBy": "DateCreated", "SortOrder": "Descending"}))["Items"]
         q = calidad(ep[0]) if ep else {}
-        # Incorporar premios de la serie si la serie los tiene
-        sit = api(srv, f"/Items/{sid}?Fields=ProviderIds,OfficialRating")
+        # Incorporar premios y edad de la serie usando item() para evitar 404 en Emby
+        sit = item(srv, sid)
         if sit:
-            tt = (sit.get("ProviderIds") or {}).get("Imdb")
+            tt = get_id(sit, "Imdb")
             if tt:
                 prem = buscar_premios(tt)
                 if prem: q["premios"] = prem
@@ -360,8 +369,7 @@ def usuario_emby():
 
 def tmdb_poster(it, sin_texto, idioma):
     """Póster de TMDB: sin texto (iso_639_1 null) o en el idioma pedido."""
-    pid = it.get("ProviderIds") or {}
-    tm = pid.get("Tmdb")
+    tm = get_id(it, "Tmdb")
     if not tm:
         return None
     tipo = "movie" if it["Type"] == "Movie" else "tv"
@@ -489,7 +497,7 @@ def pasada(limite=None, buscar=None, forzar=False, revertir_todo=False):
         if not revertir_todo:
             for it in listar("jellyfin", tipos, buscar):
                 for k in ("Imdb", "Tmdb", "Tvdb"):
-                    v = (it.get("ProviderIds") or {}).get(k)
+                    v = get_id(it, k)
                     if v: jf_idx[(k, v)] = it
         for srv in ("emby", "jellyfin"):
             if not cf["servidores"].get(srv):
@@ -515,8 +523,7 @@ def pasada(limite=None, buscar=None, forzar=False, revertir_todo=False):
             ESTADO["total"] += len(items)
             for it in items:
                 ESTADO["ultimo"] = f"{srv}: {it['Name']}"
-                pid = it.get("ProviderIds") or {}
-                jf = next((jf_idx[(k, pid[k])] for k in ("Imdb", "Tmdb", "Tvdb") if pid.get(k) and (k, pid[k]) in jf_idx), None)
+                jf = next((jf_idx[(k, get_id(it, k))] for k in ("Imdb", "Tmdb", "Tvdb") if get_id(it, k) and (k, get_id(it, k)) in jf_idx), None)
                 try:
                     res = procesar(srv, it, jf, forzar)
                     if res != "igual":
