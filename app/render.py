@@ -436,7 +436,7 @@ def lista_insignias(q, ins, etiqueta):
     return out[: ins.get("max", 4)]
 
 
-def insignias(img, q, cf):
+def insignias(img, q, cf, hay_notas=True):
     ins = cf["insignias"]
     if not ins.get("activar", True):
         return img
@@ -459,7 +459,7 @@ def insignias(img, q, cf):
     vertical = ins.get("apilar", False) and pos in ("left", "right", "bottom|left", "bottom|right")
 
     barra_pos = cf["barra"].get("posicion", "bottom")
-    offset_barra_y = (130 * k * cf["barra"].get("escala_fuente", 1.0)) if cf["notas"].get("fuentes") else 0
+    offset_barra_y = (130 * k * cf["barra"].get("escala_fuente", 1.0)) if (hay_notas and cf["notas"].get("fuentes")) else 0
 
     if vertical:
         tot = len(lst) * h + gap * (len(lst) - 1)
@@ -518,8 +518,9 @@ def componer(img, notas, q, cf):
     img = img.convert("RGBA")
     if img.width != W:
         img = img.resize((W, int(img.height * W / img.width)), Image.LANCZOS)
+    hay_notas = bool(any(f in notas for f in cf["notas"].get("fuentes", [])))
     img = barra(img, notas, cf)
-    img = insignias(img, q, cf)
+    img = insignias(img, q, cf, hay_notas=hay_notas)
     return img.convert("RGB")
 
 
