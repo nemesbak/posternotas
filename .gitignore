@@ -1,0 +1,7 @@
+data/
+*.sqlite*
+originales/
+__pycache__/
+*.pyc
+*.log
+.DS_Store
