@@ -167,14 +167,14 @@ header {
 /* Contenedor Principal */
 .wrap {
   display: grid;
-  grid-template-columns: 230px minmax(0, 1fr) 440px;
+  grid-template-columns: 200px minmax(0, 1fr) 440px;
   gap: 24px;
   padding: 24px 28px;
-  max-width: 1680px;
+  max-width: 1720px;
   margin: 0 auto;
 }
-@media (max-width: 1300px) {
-  .wrap { grid-template-columns: 210px 1fr; }
+@media (max-width: 1320px) {
+  .wrap { grid-template-columns: 180px 1fr; }
   .vista { grid-column: 1 / -1; order: -1; position: static !important; }
 }
 @media (max-width: 800px) {
@@ -187,7 +187,7 @@ header {
 nav {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
   position: sticky;
   top: 80px;
   align-self: start;
@@ -196,11 +196,11 @@ nav a {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 11px 14px;
-  border-radius: 11px;
+  padding: 12px 16px;
+  border-radius: 12px;
   color: var(--dim);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   border: 1px solid transparent;
   transition: all 0.15s ease;
@@ -214,7 +214,7 @@ nav a.on {
   color: var(--acc);
   border-color: rgba(245, 197, 24, 0.3);
 }
-nav a span { font-size: 16px; width: 22px; text-align: center; }
+nav a span { font-size: 18px; width: 24px; text-align: center; }
 
 /* Pestañas */
 .pane { display: none; animation: fade 0.25s ease; }
@@ -331,6 +331,7 @@ input[type=color] {
   background: var(--bg2);
   border: 1px solid var(--line2);
   gap: 2px;
+  flex-wrap: wrap;
 }
 .seg button {
   border: 0;
@@ -342,6 +343,7 @@ input[type=color] {
   cursor: pointer;
   font-size: 12px;
   transition: 0.15s;
+  user-select: none;
 }
 .seg button:hover { color: var(--txt); }
 .seg button.on {
@@ -350,12 +352,17 @@ input[type=color] {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 
-/* Galería de temas y presets */
+/* Galería de presets compacta y fluida */
 .temas {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(136px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+  max-height: 295px;
+  overflow-y: auto;
+  padding-right: 4px;
 }
+.temas::-webkit-scrollbar { width: 6px; }
+.temas::-webkit-scrollbar-thumb { background: var(--line2); border-radius: 99px; }
 .tema {
   border: 2px solid var(--line);
   border-radius: 12px;
@@ -382,7 +389,7 @@ input[type=color] {
 }
 .tema div {
   padding: 8px 10px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   line-height: 1.3;
 }
@@ -390,20 +397,21 @@ input[type=color] {
 /* Selector de posición */
 .posmap {
   position: relative;
-  width: 160px;
+  width: 150px;
   aspect-ratio: 2 / 3;
   border-radius: 12px;
   background: linear-gradient(160deg, #2a2e40, #141622);
   border: 1px solid var(--line2);
   box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
 }
 .posmap button {
   position: absolute;
-  width: 32px;
-  height: 24px;
+  width: 30px;
+  height: 22px;
   border-radius: 6px;
   border: 1px solid var(--line2);
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.7);
   cursor: pointer;
   transition: all 0.15s;
   font-size: 10px;
@@ -415,6 +423,29 @@ input[type=color] {
   border-color: var(--acc);
   color: #000;
   box-shadow: 0 0 10px rgba(245, 197, 24, 0.5);
+}
+
+/* Acordeón avanzado de detalles */
+details.card summary {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+  outline: none;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--txt);
+}
+details.card summary::-webkit-details-marker { display: none; }
+details.card summary::after {
+  content: "▾";
+  font-size: 16px;
+  color: var(--dim);
+  transition: transform 0.2s ease;
+}
+details[open].card summary::after {
+  transform: rotate(180deg);
 }
 
 /* Listas ordenables */
@@ -735,60 +766,80 @@ input[type=color] {
 
 <div class="wrap">
   <nav id="nav">
-    <a data-p="tema" class="on"><span>🎨</span>Tema</a>
-    <a data-p="notas"><span>⭐</span>Notas</a>
-    <a data-p="barra"><span>📐</span>Barra de notas</a>
-    <a data-p="insignias"><span>🏷️</span>Insignias</a>
-    <a data-p="imagen"><span>🖼️</span>Imagen</a>
-    <a data-p="biblio"><span>📚</span>Biblioteca</a>
+    <a data-p="diseno" class="on"><span>🎨</span>Diseño</a>
+    <a data-p="ajustes"><span>⚙️</span>Ajustes</a>
     <a data-p="aplicar"><span>🚀</span>Aplicar</a>
   </nav>
 
   <main>
-    <!-- TEMA -->
-    <section class="pane on" id="p-tema">
-      <h2>Tema y Apariencia</h2>
-      <p class="sub">Elige el estilo visual general de las notas en el póster. Las vistas previas usan el título actualmente seleccionado.</p>
-      
+    <!-- 1. PESTAÑA UNIFICADA DE DISEÑO -->
+    <section class="pane on" id="p-diseno">
+      <h2>Estudio de Diseño</h2>
+      <p class="sub">Personaliza el tema, posición, formato, fuentes de notas e insignias. Todo en una única pantalla con vista previa en vivo.</p>
+
+      <!-- Presets -->
       <div class="card">
-        <h3>Estilos prediseñados (Presets)</h3>
-        <p class="sub" style="margin-top:-8px">Un clic carga la combinación completa de tema, barra e insignias. Luego puedes ajustarlo a tu gusto.</p>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3 style="margin:0">Estilos prediseñados (Presets)</h3>
+          <span style="font-size:12px;color:var(--dim)">1 clic aplica el estilo completo</span>
+        </div>
         <div class="temas" id="presets"></div>
       </div>
 
+      <!-- Barra de Calificaciones -->
       <div class="card">
-        <h3>Temas base</h3>
-        <div class="temas" id="temas"></div>
-      </div>
+        <h3>Barra de Calificaciones</h3>
 
-      <div class="card">
-        <div class="fila">
+        <!-- Posición y Forma -->
+        <div class="grid2" style="align-items:start;margin-bottom:16px">
           <div>
-            <b>Versión clara (Light)</b>
-            <small>Fondo blanco semitransparente con tipografía oscura (estilo Light de RPDB)</small>
+            <span style="font-weight:600;font-size:13px;display:block;margin-bottom:8px">Posición en el póster</span>
+            <div style="display:flex;gap:16px;align-items:center">
+              <div class="posmap" id="posBarra"></div>
+              <div style="font-size:12px;color:var(--dim);line-height:1.5">
+                <p style="margin:0 0 6px">Haz clic en el mapa para situar las notas.</p>
+                <p style="margin:0">Soporta arriba, abajo, centro y laterales verticales.</p>
+              </div>
+            </div>
           </div>
-          <label class="sw"><input type="checkbox" data-k="claro"><i></i></label>
+          <div>
+            <div class="campo" style="margin-bottom:12px">
+              <span>Tema de la barra</span>
+              <select data-k="tema">
+                <option value="pastillas">Pastillas Nebula (Firma v1)</option>
+                <option value="pastillas-barra">Pastillas en barra oscura</option>
+                <option value="blocks">Bloques independientes</option>
+                <option value="rounded-blocks">Píldoras redondeadas (Stream)</option>
+                <option value="boxes">Cajas en 2 pisos (Logo arriba)</option>
+                <option value="sharp-blocks">Bloques rectos</option>
+                <option value="stripes-right">Franjas de color (derecha)</option>
+                <option value="stripes-left">Franjas de color (izquierda)</option>
+                <option value="bar">Barra continua clásica</option>
+              </select>
+            </div>
+            <div class="campo" style="margin-bottom:12px">
+              <span>Inclinación de los bloques</span>
+              <div class="seg" data-seg="barra.inclinacion">
+                <button data-v="no">Recto</button>
+                <button data-v="right">Deportivo ▰</button>
+                <button data-v="left">Inclinado izq. ▰</button>
+              </div>
+            </div>
+            <div class="fila" style="padding:6px 0">
+              <div>
+                <b>Modo claro (Light)</b>
+                <small>Fondo blanco con tipografía oscura</small>
+              </div>
+              <label class="sw"><input type="checkbox" data-k="claro"><i></i></label>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
 
-    <!-- NOTAS -->
-    <section class="pane" id="p-notas">
-      <h2>Fuentes de Calificación</h2>
-      <p class="sub">Selecciona qué proveedores mostrar y en qué orden de prioridad.</p>
-      
-      <div class="card">
-        <h3>Fuentes de notas</h3>
-        <ul class="orden" id="fuentes"></ul>
-        <p class="sub" id="avisoMdb" style="margin:14px 0 0;font-size:12px"></p>
-      </div>
-
-      <div class="card">
-        <h3>Formato de las cifras</h3>
+        <!-- Formato y tipografía -->
         <div class="fila">
           <div>
-            <b>Estilo del texto</b>
-            <small>textStyle de RPDB</small>
+            <b>Formato de la puntuación</b>
+            <small>Estilo numérico de la calificación</small>
           </div>
           <div class="seg" data-seg="notas.formato">
             <button data-v="0">7,4 · 75%</button>
@@ -796,6 +847,7 @@ input[type=color] {
             <button data-v="2">Sin sufijos</button>
           </div>
         </div>
+
         <div class="fila">
           <div>
             <b>Separador decimal con coma</b>
@@ -803,162 +855,84 @@ input[type=color] {
           </div>
           <label class="sw"><input type="checkbox" data-k="notas.decimales_coma"><i></i></label>
         </div>
-        <div class="fila">
-          <div>
-            <b>Mínimo de votos en IMDb</b>
-            <small>Oculta la nota de IMDb si el título tiene pocos votos (RPDB usa 500)</small>
-          </div>
-          <input type="number" min="0" step="100" data-k="notas.min_votos_imdb" style="width:110px">
-        </div>
-        <div class="fila">
-          <div>
-            <b>Etiqueta personalizada</b>
-            <small>Texto libre como primera pastilla (p. ej. «ESTRENO» o «COLECCIÓN»)</small>
-          </div>
-          <input type="text" data-k="notas.etiqueta" maxlength="20" placeholder="Vacío = nada" style="width:160px">
-        </div>
-      </div>
-    </section>
 
-    <!-- BARRA DE NOTAS -->
-    <section class="pane" id="p-barra">
-      <h2>Barra de Notas</h2>
-      <p class="sub">Personaliza la geometría, colores, tipografía y efectos de la barra.</p>
-      
-      <div class="card">
-        <h3>Posición y escala</h3>
-        <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
-          <div class="posmap" id="posBarra"></div>
-          <div style="flex:1;min-width:240px">
-            <div class="campo">
-              <span>Escala general de la fuente</span>
-              <div class="rng"><input type="range" min="0.6" max="1.5" step="0.05" data-k="barra.escala_fuente"><output></output></div>
-            </div>
-            <div class="campo" style="margin-top:10px">
-              <span>Opacidad del fondo</span>
-              <div class="rng"><input type="range" min="0.05" max="1.0" step="0.02" data-k="barra.opacidad"><output></output></div>
-            </div>
-            <div class="campo" style="margin-top:10px">
-              <span>Relleno interno (Padding)</span>
-              <div class="rng"><input type="range" min="4" max="28" step="1" data-k="barra.relleno"><output></output></div>
-            </div>
-            <div class="campo" style="margin-top:10px">
-              <span>Margen respecto al borde del póster</span>
-              <div class="rng"><input type="range" min="0" max="80" step="2" data-k="barra.margen"><output></output></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>Forma, bordes e inclinación</h3>
         <div class="fila">
           <div>
-            <b>Redondeo de esquinas</b>
-            <small>Automático según el tema, píldora completa o píxeles personalizados</small>
+            <b>Estilo de los logotipos</b>
+            <small>Forma del icono de IMDb, RT, TMDB...</small>
           </div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <div class="seg" id="segRedondeo">
-              <button data-v="default">Auto</button>
-              <button data-v="full">Completo</button>
-              <button data-v="px">Píxeles</button>
-            </div>
-            <input type="number" id="redondeoPx" min="0" max="60" style="width:70px">
-          </div>
-        </div>
-        <div class="fila">
-          <div>
-            <b>Inclinación geométrica (Estilo Deportivo)</b>
-            <small>Corta los bloques en paralelogramos deportivos nítidos</small>
-          </div>
-          <div class="seg" data-seg="barra.inclinacion">
-            <button data-v="no">Recto</button>
-            <button data-v="right">Inclinado dcha. ▰</button>
-            <button data-v="left">Inclinado izq. ▰</button>
-          </div>
-        </div>
-        <div class="fila">
-          <div>
-            <b>Borde exterior</b>
-            <small>Grosor del marco y color (0 = sin borde)</small>
-          </div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <input type="number" min="0" max="12" data-k="barra.borde" style="width:70px">
-            <input type="color" data-k="barra.color_borde">
-          </div>
-        </div>
-        <div class="fila">
-          <div><b>Lados con borde</b></div>
-          <div class="seg" data-seg="barra.lado_borde">
-            <button data-v="default">Todos</button>
-            <button data-v="left">Izq.</button>
-            <button data-v="right">Dcha.</button>
-            <button data-v="top">Arriba</button>
-            <button data-v="bottom">Abajo</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>Colores y tipografía</h3>
-        <div class="fila">
-          <div><b>Color de fondo de las cajas</b></div>
-          <input type="color" data-k="barra.color">
-        </div>
-        <div class="fila">
-          <div><b>Color del texto y puntuaciones</b></div>
-          <input type="color" data-k="barra.color_texto">
-        </div>
-        <div class="fila">
-          <div><b>Estilo de los logotipos</b></div>
           <div class="seg" data-seg="barra.logos">
             <button data-v="normal">Pastilla</button>
             <button data-v="redondo">Círculo</button>
             <button data-v="no">Sin logos</button>
           </div>
         </div>
-        <div class="fila">
+
+        <div class="grid2" style="margin-top:12px">
+          <div class="campo">
+            <span>Escala de la fuente</span>
+            <div class="rng"><input type="range" min="0.6" max="1.5" step="0.05" data-k="barra.escala_fuente"><output></output></div>
+          </div>
+          <div class="campo">
+            <span>Opacidad del fondo</span>
+            <div class="rng"><input type="range" min="0.05" max="1.0" step="0.02" data-k="barra.opacidad"><output></output></div>
+          </div>
+        </div>
+
+        <div class="fila" style="margin-top:8px">
           <div><b>Números en negrita extra (Black)</b></div>
           <label class="sw"><input type="checkbox" data-k="barra.negrita"><i></i></label>
         </div>
+
         <div class="fila">
           <div>
             <b>Sombra y elevación 3D</b>
-            <small>Proyecta una sombra suave que garantiza legibilidad en fondos blancos</small>
+            <small>Garantiza legibilidad sobre pósters claros o con mucho contraste</small>
           </div>
           <label class="sw"><input type="checkbox" data-k="barra.sombra"><i></i></label>
         </div>
-      </div>
-    </section>
 
-    <!-- INSIGNIAS -->
-    <section class="pane" id="p-insignias">
-      <h2>Insignias de Calidad y Galardones</h2>
-      <p class="sub">Datos técnicos leídos directamente de las pistas de vídeo y audio del archivo, y premios vía Wikidata.</p>
-      
-      <div class="card">
         <div class="fila">
           <div>
-            <b>Activar insignias</b>
-            <small>Superpone sellos técnicos de resolución, HDR, Dolby Vision, códec, audio y premios</small>
+            <b>Etiqueta personalizada</b>
+            <small>Texto libre como primera pastilla (ej. «ESTRENO» o «COLECCIÓN»)</small>
           </div>
-          <label class="sw"><input type="checkbox" data-k="insignias.activar"><i></i></label>
+          <input type="text" data-k="notas.etiqueta" maxlength="20" placeholder="Vacío = nada" style="width:160px">
         </div>
       </div>
 
+      <!-- Fuentes de Notas -->
       <div class="card">
-        <h3>Insignias activas y orden de prioridad</h3>
-        <p class="sub" style="margin-top:-8px">Usa las flechas o arrastra para ordenar qué insignias tienen prioridad si superan el máximo.</p>
-        <ul class="orden" id="tiposIns"></ul>
+        <h3>Fuentes de Calificación (Activar y Ordenar)</h3>
+        <p class="sub" style="margin-top:-8px">Arrastra o pulsa las flechas para reordenar las notas o activar/desactivar proveedores.</p>
+        <ul class="orden" id="fuentes"></ul>
+        <p class="sub" id="avisoMdb" style="margin:14px 0 0;font-size:12px"></p>
       </div>
 
+      <!-- Insignias Técnicas y Premios -->
       <div class="card">
-        <h3>Posición, escala y estilo</h3>
-        <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
-          <div class="posmap" id="posIns"></div>
-          <div style="flex:1;min-width:240px">
-            <div class="fila">
-              <div><b>Paleta de color</b></div>
+        <div class="fila" style="margin-bottom:14px">
+          <div>
+            <b>Activar insignias técnicas y premios</b>
+            <small>Superpone sellos de resolución (4K), HDR/DV, audio espacial, idioma, premios (Oscars/Goyas) y edad</small>
+          </div>
+          <label class="sw"><input type="checkbox" data-k="insignias.activar"><i></i></label>
+        </div>
+
+        <div class="grid2" style="align-items:start;margin-bottom:16px">
+          <div>
+            <span style="font-weight:600;font-size:13px;display:block;margin-bottom:8px">Posición de las insignias</span>
+            <div style="display:flex;gap:16px;align-items:center">
+              <div class="posmap" id="posIns"></div>
+              <div style="font-size:12px;color:var(--dim);line-height:1.5">
+                <p style="margin:0 0 6px">Elige la esquina para las insignias.</p>
+                <p style="margin:0">Se adaptan automáticamente para no chocar con las notas.</p>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="campo" style="margin-bottom:12px">
+              <span>Paleta de color</span>
               <div class="seg" data-seg="insignias.estilo">
                 <button data-v="nebula">Nebula</button>
                 <button data-v="oro">Oro</button>
@@ -967,41 +941,135 @@ input[type=color] {
                 <button data-v="normal">Grafito</button>
               </div>
             </div>
-            <div class="fila">
+            <div class="fila" style="padding:6px 0">
               <div>
-                <b>Apilar verticalmente</b>
-                <small>En columna en lugar de fila horizontal</small>
+                <b>Apilar en columna</b>
+                <small>Vertical en vez de horizontal</small>
               </div>
               <label class="sw"><input type="checkbox" data-k="insignias.apilar"><i></i></label>
             </div>
-            <div class="fila">
+            <div class="fila" style="padding:6px 0">
               <div><b>Número máximo de insignias</b></div>
               <input type="number" min="1" max="8" data-k="insignias.max" style="width:70px">
             </div>
-            <div class="campo" style="margin-top:10px">
-              <span>Tamaño de las insignias</span>
-              <div class="rng"><input type="range" min="0.6" max="1.5" step="0.05" data-k="insignias.escala"><output></output></div>
-            </div>
-            <div class="campo" style="margin-top:10px">
-              <span>Opacidad de las insignias</span>
-              <div class="rng"><input type="range" min="0.3" max="1.0" step="0.02" data-k="insignias.opacidad"><output></output></div>
-            </div>
           </div>
         </div>
+
+        <div class="grid2" style="margin-bottom:16px">
+          <div class="campo">
+            <span>Tamaño de las insignias</span>
+            <div class="rng"><input type="range" min="0.6" max="1.5" step="0.05" data-k="insignias.escala"><output></output></div>
+          </div>
+          <div class="campo">
+            <span>Opacidad de las insignias</span>
+            <div class="rng"><input type="range" min="0.3" max="1.0" step="0.02" data-k="insignias.opacidad"><output></output></div>
+          </div>
+        </div>
+
+        <span style="font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:var(--dim);display:block;margin:16px 0 10px">Insignias activas y orden de prioridad</span>
+        <ul class="orden" id="tiposIns"></ul>
       </div>
+
+      <!-- Ajustes Avanzados (Colapsable) -->
+      <details class="card">
+        <summary>
+          <span>⚙️ Ajustes avanzados de bordes, esquinas y colores personalizados</span>
+        </summary>
+        <div style="margin-top:16px">
+          <div class="fila">
+            <div>
+              <b>Redondeo de esquinas</b>
+              <small>Automático según el tema, píldora completa o píxeles personalizados</small>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <div class="seg" id="segRedondeo">
+                <button data-v="default">Auto</button>
+                <button data-v="full">Completo</button>
+                <button data-v="px">Píxeles</button>
+              </div>
+              <input type="number" id="redondeoPx" min="0" max="60" style="width:70px">
+            </div>
+          </div>
+          <div class="fila">
+            <div>
+              <b>Borde exterior</b>
+              <small>Grosor del marco y color (0 = sin borde)</small>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="number" min="0" max="12" data-k="barra.borde" style="width:70px">
+              <input type="color" data-k="barra.color_borde">
+            </div>
+          </div>
+          <div class="fila">
+            <div><b>Lados con borde</b></div>
+            <div class="seg" data-seg="barra.lado_borde">
+              <button data-v="default">Todos</button>
+              <button data-v="left">Izq.</button>
+              <button data-v="right">Dcha.</button>
+              <button data-v="top">Arriba</button>
+              <button data-v="bottom">Abajo</button>
+            </div>
+          </div>
+          <div class="fila">
+            <div><b>Color de fondo de las cajas</b></div>
+            <input type="color" data-k="barra.color">
+          </div>
+          <div class="fila">
+            <div><b>Color del texto y puntuaciones</b></div>
+            <input type="color" data-k="barra.color_texto">
+          </div>
+          <div class="grid2" style="margin-top:12px">
+            <div class="campo">
+              <span>Relleno interno (Padding)</span>
+              <div class="rng"><input type="range" min="4" max="28" step="1" data-k="barra.relleno"><output></output></div>
+            </div>
+            <div class="campo">
+              <span>Margen respecto al borde del póster</span>
+              <div class="rng"><input type="range" min="0" max="80" step="2" data-k="barra.margen"><output></output></div>
+            </div>
+          </div>
+          <div class="fila" style="margin-top:8px">
+            <div>
+              <b>Mínimo de votos en IMDb</b>
+              <small>Oculta la nota de IMDb si el título tiene pocos votos</small>
+            </div>
+            <input type="number" min="0" step="100" data-k="notas.min_votos_imdb" style="width:110px">
+          </div>
+        </div>
+      </details>
     </section>
 
-    <!-- IMAGEN -->
-    <section class="pane" id="p-imagen">
-      <h2>Tratamiento de Imagen</h2>
-      <p class="sub">Determina la imagen de partida, calidad de compresión y formatos adicionales.</p>
-      
+    <!-- 2. PESTAÑA DE AJUSTES DEL SERVIDOR Y MEDIOS -->
+    <section class="pane" id="p-ajustes">
+      <h2>Servidores y Tratamiento de Imagen</h2>
+      <p class="sub">Configuración de las bibliotecas de Emby/Jellyfin, resolución, origen de las carátulas y automatización.</p>
+
       <div class="card">
-        <h3>Póster base</h3>
+        <h3>Servidores y Contenido</h3>
+        <div class="fila">
+          <div><b>Emby Server</b><small>http://192.168.1.25:8097</small></div>
+          <label class="sw"><input type="checkbox" data-k="servidores.emby"><i></i></label>
+        </div>
+        <div class="fila">
+          <div><b>Jellyfin Server</b><small>http://192.168.1.25:8096</small></div>
+          <label class="sw"><input type="checkbox" data-k="servidores.jellyfin"><i></i></label>
+        </div>
+        <div class="fila">
+          <div><b>Películas (Movies)</b></div>
+          <label class="sw"><input type="checkbox" data-k="tipos.Movie"><i></i></label>
+        </div>
+        <div class="fila">
+          <div><b>Series de TV</b><small>Usa los datos técnicos del episodio más reciente</small></div>
+          <label class="sw"><input type="checkbox" data-k="tipos.Series"><i></i></label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Póster Base y Calidad de Imagen</h3>
         <div class="fila">
           <div>
             <b>Origen de la imagen original</b>
-            <small>«Sin texto» y «Por idioma» se descargan limpias desde TMDB si existen</small>
+            <small>«Sin texto» e «Idioma» se descargan limpias desde TMDB si existen</small>
           </div>
           <div class="seg" data-seg="imagen.origen">
             <button data-v="actual">Póster actual</button>
@@ -1036,15 +1104,11 @@ input[type=color] {
           </div>
           <label class="sw"><input type="checkbox" data-k="imagen.fondos"><i></i></label>
         </div>
-      </div>
-
-      <div class="card">
-        <h3>Resolución y compresión</h3>
-        <div class="grid2">
+        <div class="grid2" style="margin-top:16px">
           <div class="campo">
             <span>Anchura del póster generado</span>
             <select data-k="imagen.ancho" data-num>
-              <option value="580">580 px (Medio · carga ultra rápida)</option>
+              <option value="580">580 px (Medio · ultra rápido)</option>
               <option value="1000">1000 px (Estándar recomendado)</option>
               <option value="1280">1280 px (Alta definición)</option>
               <option value="2000">2000 px (Máxima fidelidad 4K)</option>
@@ -1056,39 +1120,13 @@ input[type=color] {
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- BIBLIOTECA -->
-    <section class="pane" id="p-biblio">
-      <h2>Biblioteca y Automatización</h2>
-      <p class="sub">Configura en qué servidores multimedia actuar y la sincronización periódica.</p>
-      
-      <div class="card">
-        <h3>Servidores y medios</h3>
-        <div class="fila">
-          <div><b>Emby Server</b><small>http://192.168.1.25:8097</small></div>
-          <label class="sw"><input type="checkbox" data-k="servidores.emby"><i></i></label>
-        </div>
-        <div class="fila">
-          <div><b>Jellyfin Server</b><small>http://192.168.1.25:8096</small></div>
-          <label class="sw"><input type="checkbox" data-k="servidores.jellyfin"><i></i></label>
-        </div>
-        <div class="fila">
-          <div><b>Películas (Movies)</b></div>
-          <label class="sw"><input type="checkbox" data-k="tipos.Movie"><i></i></label>
-        </div>
-        <div class="fila">
-          <div><b>Series de TV</b><small>Usa los datos técnicos del episodio más reciente</small></div>
-          <label class="sw"><input type="checkbox" data-k="tipos.Series"><i></i></label>
-        </div>
-      </div>
 
       <div class="card">
-        <h3>Pasada automática nocturna</h3>
+        <h3>Pasada Automática Nocturna</h3>
         <div class="fila">
           <div>
             <b>Activar actualización automática</b>
-            <small>Procesa títulos recién añadidos y notas de IMDb actualizadas</small>
+            <small>Procesa títulos recién añadidos y notas de IMDb actualizadas en segundo plano</small>
           </div>
           <label class="sw"><input type="checkbox" data-k="auto.programado"><i></i></label>
         </div>
@@ -1099,24 +1137,22 @@ input[type=color] {
         <div class="fila">
           <div>
             <b>Pausa entre títulos (segundos)</b>
-            <small>Evita sobrecargar las APIs de Emby y Jellyfin</small>
+            <small>Evita saturar las APIs de Emby y Jellyfin</small>
           </div>
           <input type="number" min="0.1" step="0.1" data-k="auto.pausa_s" style="width:90px">
         </div>
         <div class="fila">
-          <div>
-            <b>Refrescar notas de MDBList cada (días)</b>
-          </div>
+          <div><b>Refrescar notas de MDBList cada (días)</b></div>
           <input type="number" min="1" data-k="auto.refrescar_dias" style="width:90px">
         </div>
       </div>
     </section>
 
-    <!-- APLICAR -->
+    <!-- 3. PESTAÑA DE APLICAR Y EJECUCIÓN -->
     <section class="pane" id="p-aplicar">
       <h2>Ejecución y Tandas</h2>
-      <p class="sub">Todos los pósters originales se guardan en el servidor antes de aplicar. Se pueden revertir en cualquier momento con 1 clic.</p>
-      
+      <p class="sub">Todos los pósters originales se conservan intactos en el servidor antes de aplicar. Se pueden revertir en cualquier momento.</p>
+
       <div class="card">
         <h3>Acciones disponibles</h3>
         <div class="acciones">
@@ -1126,7 +1162,7 @@ input[type=color] {
           </button>
           <button class="accion" data-a="50">
             <b>➕ Tanda de 50 títulos</b>
-            <small>Aplica de 50 en 50 con seguridad</small>
+            <small>Aplica de 50 en 50 con total seguridad</small>
           </button>
           <button class="accion pri" data-a="todo">
             <b>🚀 Toda la biblioteca</b>
@@ -1151,7 +1187,7 @@ input[type=color] {
 
       <div class="card">
         <h3>Pósters aplicados recientemente</h3>
-        <p class="sub" style="margin-top:-8px">Haz clic en cualquier carátula para inspeccionarla o revertirla en el panel derecho.</p>
+        <p class="sub" style="margin-top:-8px">Haz clic en cualquier carátula para previsualizarla o revertirla en el panel derecho.</p>
         <div class="recientes" id="recientes"></div>
       </div>
 
@@ -1206,7 +1242,7 @@ input[type=color] {
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 
-let C = {}, G = {}, M = {}, sel = null, tt = null, ttT = null;
+let C = {}, G = {}, M = {}, sel = null, tt = null;
 
 const get = (o, k) => k.split('.').reduce((a, b) => a?.[b], o);
 const put = (o, k, v) => {
@@ -1238,8 +1274,6 @@ const sucio = () => {
 const cambio = () => {
   sucio();
   preview();
-  clearTimeout(ttT);
-  ttT = setTimeout(temas, 600);
 };
 
 const INS = {
@@ -1255,18 +1289,6 @@ const INS = {
   imax: 'IMAX Enhanced',
   '3d': '3D estereoscópico',
   pais: 'Bandera del país de origen'
-};
-
-const NOMTEMA = {
-  pastillas: 'Pastillas (Nebula)',
-  'pastillas-barra': 'Pastillas en barra',
-  bar: 'Barra completa',
-  blocks: 'Bloques',
-  'rounded-blocks': 'Bloques redondos',
-  boxes: 'Cajas (2 pisos)',
-  'sharp-blocks': 'Bloques rectos',
-  'stripes-left': 'Franjas izquierda',
-  'stripes-right': 'Franjas derecha'
 };
 
 const NOMPOS = {
@@ -1290,14 +1312,14 @@ const NOMPOS = {
   'bottom|right': 'Abajo derecha'
 };
 
-// Navegación entre pestañas
+// Navegación entre las 3 pestañas principales
 $$('#nav a').forEach(a => a.onclick = () => {
   $$('#nav a').forEach(x => x.classList.toggle('on', x === a));
   $$('.pane').forEach(p => p.classList.toggle('on', p.id === 'p-' + a.dataset.p));
-  if (a.dataset.p === 'tema') { temas(); presets(); }
+  if (a.dataset.p === 'diseno') { presets(); }
 });
 
-// Enlace bidireccional de controles con objeto de configuración
+// Enlace bidireccional de controles con el objeto de configuración
 function enlazar() {
   $$('[data-k]').forEach(e => {
     const k = e.dataset.k;
@@ -1347,7 +1369,7 @@ function enlazar() {
   px.disabled = modo !== 'px';
   px.oninput = () => { C.barra.redondeo = +px.value; cambio(); };
 
-  // Mapas visuales de posición (10 posiciones completas para la barra)
+  // Mapas visuales de posición (10 botones barra + 6 botones insignias)
   posmapa('#posBarra', 'barra.posicion', [
     ['top-left', 14, 7], ['top', 50, 7], ['top-right', 86, 7],
     ['left-top', 14, 30], ['right-top', 86, 30],
@@ -1356,7 +1378,6 @@ function enlazar() {
     ['bottom-left', 14, 93], ['bottom', 50, 93], ['bottom-right', 86, 93]
   ]);
 
-  // Mapa de posición de insignias (6 posiciones)
   posmapa('#posIns', 'insignias.posicion', [
     ['left', 14, 7], ['center', 50, 7], ['right', 86, 7],
     ['bottom|left', 14, 93], ['bottom|center', 50, 93], ['bottom|right', 86, 93]
@@ -1368,12 +1389,13 @@ function enlazar() {
 
 function posmapa(selector, k, pts) {
   const m = $(selector);
+  if (!m) return;
   m.innerHTML = '';
   pts.forEach(([v, x, y]) => {
     const b = document.createElement('button');
     b.title = NOMPOS[v] || v;
-    b.style.left = `calc(${x}% - 16px)`;
-    b.style.top = `calc(${y}% - 12px)`;
+    b.style.left = `calc(${x}% - 15px)`;
+    b.style.top = `calc(${y}% - 11px)`;
     b.classList.toggle('on', get(C, k) === v);
     b.onclick = () => {
       put(C, k, v);
@@ -1384,7 +1406,7 @@ function posmapa(selector, k, pts) {
   });
 }
 
-// Lista ordenable robusta (con drag-and-drop Y flechas de subir/bajar)
+// Lista ordenable interactiva
 function ordenable(ul, arr, todos, nombre, bloqueado, onc) {
   ul.innerHTML = '';
   const lista = [...arr, ...todos.filter(k => !arr.includes(k))];
@@ -1409,7 +1431,6 @@ function ordenable(ul, arr, todos, nombre, bloqueado, onc) {
       <label class="sw"><input type="checkbox" ${on ? 'checked' : ''}><i></i></label>
     `;
 
-    // Toggle switch
     li.querySelector('input').onchange = e => {
       if (e.target.checked) {
         if (!arr2.includes(k)) arr2.push(k);
@@ -1419,7 +1440,6 @@ function ordenable(ul, arr, todos, nombre, bloqueado, onc) {
       onc(arr2);
     };
 
-    // Botones subir / bajar
     li.querySelector('.b-up').onclick = () => {
       const pos = arr2.indexOf(k);
       if (pos > 0) {
@@ -1439,7 +1459,6 @@ function ordenable(ul, arr, todos, nombre, bloqueado, onc) {
       }
     };
 
-    // Drag and drop HTML5
     li.ondragstart = () => li.classList.add('drag');
     li.ondragend = () => {
       li.classList.remove('drag');
@@ -1472,7 +1491,7 @@ function listaFuentes() {
   );
   $('#avisoMdb').textContent = M.mdblist
     ? '✔ MDBList activo: todas las fuentes y críticas están disponibles.'
-    : 'Sin clave de MDBList: IMDb, Rotten Tomatoes (crítica), TMDB y la Media de todas funcionan libremente sin necesidad de clave externa.';
+    : 'Sin clave de MDBList: IMDb, Rotten Tomatoes (crítica), TMDB y la Media funcionan de forma libre sin clave externa.';
 }
 
 function listaIns() {
@@ -1487,33 +1506,6 @@ function listaIns() {
     () => false,
     v => { C.insignias.lista = v; listaIns(); cambio(); }
   );
-}
-
-// Galería de temas
-function temas() {
-  const g = $('#temas');
-  if (!g.children.length && M.temas) {
-    M.temas.forEach(t => {
-      const d = document.createElement('div');
-      d.className = 'tema';
-      d.dataset.t = t;
-      d.innerHTML = `<img alt="" loading="lazy"><div>${NOMTEMA[t] || t}</div>`;
-      d.onclick = () => {
-        C.tema = t;
-        marcaTema();
-        cambio();
-      };
-      g.appendChild(d);
-    });
-  }
-  marcaTema();
-  if (!sel || !$('#p-tema').classList.contains('on')) return;
-
-  $$('#temas .tema').forEach(d => {
-    const c = JSON.parse(JSON.stringify(C));
-    c.tema = d.dataset.t;
-    d.querySelector('img').src = `/api/preview?srv=${sel.srv}&id=${sel.id}&w=240&conf=${encodeURIComponent(JSON.stringify(c))}`;
-  });
 }
 
 function fusion(a, b) {
@@ -1540,10 +1532,9 @@ function presets() {
       d.onclick = () => {
         fusion(C, JSON.parse(JSON.stringify(p.conf)));
         enlazar();
-        marcaTema();
         $$('#presets .tema').forEach(x => x.classList.toggle('on', x === d));
         cambio();
-        toast('Estilo «' + p.nombre + '» cargado (listo para previsualizar)');
+        toast('Estilo «' + p.nombre + '» cargado');
       };
       g.appendChild(d);
     });
@@ -1554,8 +1545,6 @@ function presets() {
     d.querySelector('img').src = `/api/preview?srv=${sel.srv}&id=${sel.id}&w=240&conf=${encodeURIComponent(JSON.stringify(c))}`;
   });
 }
-
-const marcaTema = () => $$('#temas .tema').forEach(d => d.classList.toggle('on', d.dataset.t === C.tema));
 
 // Vista previa interactiva
 function preview() {
@@ -1574,7 +1563,7 @@ function preview() {
       toast('No se pudo generar la vista previa');
     };
     img.src = `/api/preview?srv=${sel.srv}&id=${sel.id}&w=860&conf=${encodeURIComponent(JSON.stringify(C))}&_=${Date.now()}`;
-  }, 260);
+  }, 240);
 }
 
 // Deslizador interactivo antes / después
@@ -1591,7 +1580,6 @@ async function elegir(srv, id) {
   $('#corte').value = 100;
   $('#marco').style.setProperty('--corte', '0%');
   preview();
-  temas();
   presets();
 
   try {
@@ -1750,7 +1738,6 @@ async function cargar() {
 
   enlazar();
   sucio();
-  temas();
   presets();
 }
 
